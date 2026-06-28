@@ -326,7 +326,7 @@ const WorkLibrary = () => {
                 </div>
               </div>
 
-
+              <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.05)', marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
                 <Link to={`/details/${work.id}`} style={{ flex: 1, padding: '0.5rem', textAlign: 'center', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 500, background: 'var(--primary-color)', color: 'white', textDecoration: 'none' }}>
                   查看详情
                 </Link>
