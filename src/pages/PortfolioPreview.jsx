@@ -3,8 +3,11 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PortfolioContext } from '../context/PortfolioContext';
 import { Printer, ArrowLeft, Award, Briefcase, FileText, Sparkles } from 'lucide-react';
 
+import { AuthContext } from '../context/AuthContext';
+
 const PortfolioPreview = () => {
   const { works } = useContext(PortfolioContext);
+  const { user } = useContext(AuthContext);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
@@ -19,6 +22,9 @@ const PortfolioPreview = () => {
     { id: 'minimalist', name: '优雅极简', icon: '✒️', desc: '典雅、金灰配色、极富文学与画册呼吸感' },
     { id: 'tech', name: '数智未来', icon: '💻', desc: '极客暗黑、霓虹炫光、科技感爆棚的数字交互' },
     { id: 'lookbook', name: '创意画册', icon: '🎨', desc: '大胆色块、不对称网格、前卫大胆的个人视觉秀' },
+    { id: 'bento', name: '模块化 (Bento)', icon: '🍱', desc: '新潮的圆角卡片拼接排版，适合互联网/UX作品' },
+    { id: 'notion', name: '极简文档 (Notion)', icon: '📄', desc: '清晰克制的结构化文档风，适合文字为主的策划案' },
+    { id: 'landscape', name: '横向演示', icon: '📽️', desc: '横向幻灯片比例，适合直接全屏演示' },
   ];
 
   // 统计标签
@@ -148,12 +154,51 @@ const PortfolioPreview = () => {
                 </div>
               </div>
             )}
+
+            {activeTemplate === 'bento' && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-100 p-8 rounded-[24px] flex flex-col justify-between min-h-[300px]">
+                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest">Selected Works</h3>
+                  <h1 className="cover-title leading-tight mt-auto">创意<br/>作品集</h1>
+                </div>
+                <div className="bg-indigo-600 p-8 rounded-[24px] text-white flex flex-col justify-between">
+                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-8">
+                    <Sparkles size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-indigo-200 uppercase tracking-wider mb-2">TARGET ROLE</p>
+                    <p className="text-2xl font-bold">{targetJob}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTemplate === 'notion' && (
+              <div className="max-w-2xl mx-auto w-full">
+                <div className="text-6xl mb-6">📝</div>
+                <h1 className="cover-title mb-6">我的求职作品集</h1>
+                <div className="border-t border-gray-200 pt-6 mt-8">
+                  <p className="text-gray-500 font-medium flex items-center gap-2 mb-2"><Briefcase size={16} /> 意向岗位：{targetJob}</p>
+                  <p className="text-gray-400 text-sm">本文档包含 {portfolioWorks.length} 个核心项目复盘。</p>
+                </div>
+              </div>
+            )}
+
+            {activeTemplate === 'landscape' && (
+              <div className="flex flex-col h-full justify-center text-center">
+                <h3 className="text-lg text-gray-400 tracking-[0.4em] mb-4 uppercase">PRESENTATION</h3>
+                <h1 className="cover-title mb-8">个人精选作品集</h1>
+                <div className="inline-block bg-white/10 px-8 py-3 rounded-full text-white font-bold tracking-widest uppercase border border-white/20">
+                  {targetJob}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="cover-footer flex justify-between items-end border-t border-slate-200/80 pt-6 mt-12">
             <div>
               <p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Author</p>
-              <p className="text-sm font-bold text-slate-800">求职人姓名</p>
+              <p className="text-sm font-bold text-slate-800">{user?.username || '求职人姓名'}</p>
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Projects</p>
@@ -240,11 +285,17 @@ const PortfolioPreview = () => {
                   
                   {/* 左栏：成果亮点与图示 */}
                   <div className="col-span-2 space-y-6">
-                    <div className="work-cover-placeholder aspect-[4/3] bg-slate-100 rounded border border-slate-200 overflow-hidden flex flex-col items-center justify-center text-center p-4">
-                      <FileText size={32} className="text-slate-300 mb-2" />
-                      <span className="text-[11px] font-bold text-slate-500 line-clamp-1">{work.coverName || '项目主图.jpg'}</span>
-                      <span className="text-[9px] text-slate-400 mt-1">作品视觉展示占位</span>
-                    </div>
+                    {work.coverImage ? (
+                      <div className="work-cover-image aspect-[4/3] rounded border border-slate-200 overflow-hidden bg-slate-100">
+                        <img src={work.coverImage} alt={work.title} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="work-cover-placeholder aspect-[4/3] bg-slate-100 rounded border border-slate-200 overflow-hidden flex flex-col items-center justify-center text-center p-4">
+                        <FileText size={32} className="text-slate-300 mb-2" />
+                        <span className="text-[11px] font-bold text-slate-500 line-clamp-1">{work.coverName || '项目主图'}</span>
+                        <span className="text-[9px] text-slate-400 mt-1">作品视觉展示占位</span>
+                      </div>
+                    )}
                     
                     <div className="highlights-box p-4 rounded border border-slate-100 bg-slate-50">
                       <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">成果数据 & 亮点</h4>
@@ -708,6 +759,151 @@ const PortfolioPreview = () => {
           background: #ffffff;
         }
 
+        /* --- 模板5：模块化 (Bento) --- */
+        .template-bento {
+          background-color: #f3f4f6;
+        }
+        .template-bento .a4-page {
+          font-family: 'Inter', -apple-system, sans-serif;
+          background-color: #ffffff;
+          border-radius: 24px;
+          color: #111827;
+          box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1);
+          padding: 24mm 24mm;
+        }
+        .template-bento .page-header, .template-bento .page-footer {
+          border-color: #f3f4f6;
+          color: #9ca3af;
+        }
+        .template-bento .cover-title {
+          font-size: 4.5rem;
+          font-weight: 800;
+          letter-spacing: -0.03em;
+          background: linear-gradient(135deg, #111827 0%, #4b5563 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+        .template-bento .section-title {
+          font-size: 2rem;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+        }
+        .template-bento .work-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+        }
+        .template-bento .overview-card, .template-bento .highlights-box, .template-bento .work-cover-image {
+          background: #f9fafb;
+          border: 1px solid #f3f4f6;
+          border-radius: 16px;
+          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .template-bento .tag-badge {
+          border-radius: 9999px;
+          padding: 6px 14px;
+          background: #f3f4f6;
+          color: #374151;
+        }
+        .template-bento .tag-primary {
+          background: #111827;
+          color: #ffffff;
+        }
+        .template-bento .work-section-h {
+          font-size: 12px;
+          font-weight: 700;
+          color: #4b5563;
+          margin-top: 16px;
+          margin-bottom: 8px;
+        }
+
+        /* --- 模板6：极简文档 (Notion) --- */
+        .template-notion {
+          background-color: #ffffff;
+        }
+        .template-notion .a4-page {
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+          color: #37352f;
+          box-shadow: none;
+          border: 1px solid #e9e9e7;
+          border-radius: 3px;
+        }
+        .template-notion .page-header, .template-notion .page-footer {
+          border-color: #ededed;
+          color: #9b9a97;
+        }
+        .template-notion .cover-title {
+          font-size: 3rem;
+          font-weight: 700;
+        }
+        .template-notion .section-title, .template-notion .work-title {
+          font-size: 1.8rem;
+          font-weight: 700;
+          border-bottom: 1px solid #ededed;
+          padding-bottom: 8px;
+          margin-bottom: 16px;
+        }
+        .template-notion .tag-badge {
+          background: rgba(227, 226, 224, 0.5);
+          color: #32302c;
+          border-radius: 3px;
+          padding: 4px 8px;
+        }
+        .template-notion .overview-card, .template-notion .highlights-box, .template-notion .work-cover-image {
+          background: transparent;
+          border: 1px solid #e9e9e7;
+          border-radius: 3px;
+        }
+        .template-notion .work-section-h {
+          font-size: 14px;
+          font-weight: 600;
+          color: #37352f;
+          margin-top: 20px;
+          margin-bottom: 8px;
+        }
+
+        /* --- 模板7：横向演示 (Landscape) --- */
+        .template-landscape .a4-page {
+          width: 297mm;
+          height: 210mm;
+          min-height: 210mm;
+          padding: 15mm 20mm;
+          background-color: #1e1e1e;
+          color: #ffffff;
+        }
+        .template-landscape .page-header, .template-landscape .page-footer {
+          border-color: #333333;
+          color: #888888;
+        }
+        .template-landscape .cover-title {
+          font-size: 4rem;
+          font-weight: bold;
+          background: linear-gradient(90deg, #ff8a00, #e52e71);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+        .template-landscape .section-title, .template-landscape .work-title {
+          font-size: 2.2rem;
+          font-weight: bold;
+          color: #ffffff;
+        }
+        .template-landscape .overview-card, .template-landscape .highlights-box, .template-landscape .work-cover-image {
+          background: #2a2a2a;
+          border: none;
+          border-radius: 8px;
+        }
+        .template-landscape .text-slate-600 {
+          color: #aaaaaa;
+        }
+        .template-landscape .tag-badge {
+          background: #333333;
+          color: #ffffff;
+          border-radius: 4px;
+        }
+        .template-landscape .tag-primary {
+          background: #e52e71;
+        }
+
         /* --- Printing Rules --- */
         @media print {
           html, body {
@@ -735,6 +931,19 @@ const PortfolioPreview = () => {
             background-color: #ffffff !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+          }
+          .template-landscape .a4-page {
+            width: 297mm !important;
+            height: 210mm !important;
+            min-height: 210mm !important;
+          }
+          
+          @page {
+            size: A4 portrait;
+            margin: 0;
+          }
+          .template-landscape @page {
+            size: A4 landscape;
           }
           
           /* Dark template special printing rule */

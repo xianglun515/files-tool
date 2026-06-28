@@ -6,7 +6,6 @@ import { dirname, join } from 'path';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import worksRoutes from './routes/works.js';
-import aiRoutes from './routes/ai.js';
 
 // 加载环境变量
 const __filename = fileURLToPath(import.meta.url);
@@ -23,7 +22,6 @@ app.use(express.json());
 // API 路由
 app.use('/api/auth', authRoutes);
 app.use('/api/works', worksRoutes);
-app.use('/api/ai', aiRoutes);
 
 // 健康检查
 app.get('/api/health', (req, res) => {

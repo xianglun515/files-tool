@@ -50,6 +50,9 @@ const workSchema = new mongoose.Schema({
   coverName: {
     type: String
   },
+  coverImage: {
+    type: String
+  },
   tags: [{
     type: String
   }],

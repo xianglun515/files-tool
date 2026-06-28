@@ -35,6 +35,17 @@ const WorkLibrary = () => {
       setFormData(prev => ({ ...prev, title: fileNameWithoutExt }));
     }
     setError('');
+
+    // 如果是图片，读取为 Base64 以供展示
+    if (selectedFile.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, coverImage: reader.result }));
+      };
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setFormData(prev => ({ ...prev, coverImage: null }));
+    }
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,9 +74,9 @@ const WorkLibrary = () => {
       source: '上传文件提取', 
       date: new Date().toISOString().split('T')[0], 
       role: '主创',
-      background: '待智能提取...',
-      idea: '待智能提取...',
-      process: '待智能提取...',
+      background: '未提供',
+      idea: '未提供',
+      process: '未提供',
     };
     
     const res = await addWork(workToSave);
@@ -74,7 +85,7 @@ const WorkLibrary = () => {
     } else {
       // 成功后清空状态
       setFile(null);
-      setFormData({ title: '', type: '图文作品' });
+      setFormData({ title: '', type: '图文作品', coverImage: null });
       setError('');
     }
     setSaving(false);
@@ -264,7 +275,32 @@ const WorkLibrary = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
           {filteredWorks.map(work => (
             <div key={work.id} className="card" style={{ display: 'flex', flexDirection: 'column', padding: '1.5rem', border: 'none' }}>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                {work.coverImage ? (
+                  <div style={{ 
+                    height: '140px', 
+                    borderRadius: '12px', 
+                    marginBottom: '1rem',
+                    backgroundImage: `url(${work.coverImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    border: '1px solid rgba(0,0,0,0.05)'
+                  }} />
+                ) : (
+                  <div style={{
+                    height: '140px',
+                    borderRadius: '12px',
+                    marginBottom: '1rem',
+                    background: 'rgba(0,0,0,0.02)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid rgba(0,0,0,0.05)'
+                  }}>
+                    <FileType size={32} style={{ color: 'var(--text-light)' }} />
+                  </div>
+                )}
+                
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
                   <h3 style={{ fontWeight: 600, fontSize: '1.1rem', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={work.title}>{work.title}</h3>
                 </div>
@@ -290,10 +326,7 @@ const WorkLibrary = () => {
                 </div>
               </div>
 
-              <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.05)', marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
-                <Link to={`/ai?workId=${work.id}`} style={{ flex: 1, padding: '0.5rem', textAlign: 'center', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 500, background: 'rgba(0,0,0,0.04)', color: 'var(--text-main)', textDecoration: 'none' }}>
-                  智能提炼话术
-                </Link>
+
                 <Link to={`/details/${work.id}`} style={{ flex: 1, padding: '0.5rem', textAlign: 'center', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 500, background: 'var(--primary-color)', color: 'white', textDecoration: 'none' }}>
                   查看详情
                 </Link>
