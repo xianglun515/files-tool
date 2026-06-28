@@ -53,7 +53,11 @@ const AIOptimization = () => {
         })
       });
 
-      if (!response.ok) throw new Error('AI 生成失败');
+      if (!response.ok) {
+        let errData;
+        try { errData = await response.json(); } catch(e) {}
+        throw new Error(errData?.message || 'AI 生成失败');
+      }
       
       const result = await response.json();
       
@@ -74,7 +78,7 @@ const AIOptimization = () => {
       });
     } catch (error) {
       console.error(error);
-      alert('AI 优化失败，请检查网络或后端配置。');
+      alert(`AI 优化失败：\n${error.message}`);
     }
     
     setGenerating(false);
