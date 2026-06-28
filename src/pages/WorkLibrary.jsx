@@ -99,28 +99,30 @@ const WorkLibrary = () => {
     <div className="animate-fade-in">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold mb-2 text-slate-800">作品库</h1>
-          <p className="text-slate-500">统一管理所有源文件、作品履历，并交由 AI 一键提炼话术。</p>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.25rem', letterSpacing: '-0.02em' }}>作品库</h1>
+          <p style={{ color: 'var(--text-muted)' }}>统一管理所有源文件、作品履历，并交由 AI 一键提炼话术。</p>
         </div>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl flex items-center gap-2">
-          <AlertCircle size={20} />
+        <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'var(--danger-bg)', color: 'var(--danger-color)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
+          <AlertCircle size={18} />
           <span>{error}</span>
         </div>
       )}
 
       {/* ================= 拖拽上传区域 ================= */}
       <div 
-        className={`mb-10 border-2 border-dashed rounded-2xl transition-all duration-300 flex flex-col items-center justify-center p-8 cursor-pointer
-          ${isDragging 
-            ? 'border-emerald-500 bg-emerald-50 scale-[1.01]' 
-            : file 
-              ? 'border-emerald-300 bg-white shadow-sm'
-              : 'border-slate-300 bg-slate-50/50 hover:bg-slate-50 hover:border-slate-400'
-          }`}
-        style={{ minHeight: file ? 'auto' : '220px' }}
+        className="card"
+        style={{ 
+          marginBottom: '2.5rem', 
+          border: isDragging ? '1px solid var(--primary-color)' : '1px dashed rgba(0,0,0,0.15)',
+          background: isDragging ? 'rgba(0, 113, 227, 0.05)' : 'var(--surface-color)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', 
+          padding: '2rem', cursor: 'pointer',
+          minHeight: file ? 'auto' : '220px',
+          boxShadow: isDragging ? 'var(--shadow-md)' : 'none'
+        }}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -134,56 +136,60 @@ const WorkLibrary = () => {
         />
 
         {!file ? (
-          <div className="text-center pointer-events-none">
-            <div className={`mx-auto w-16 h-16 mb-4 rounded-full flex items-center justify-center transition-transform duration-500 ${isDragging ? 'bg-emerald-100 scale-110' : 'bg-white shadow-sm'}`}>
-              <UploadCloud size={28} className={isDragging ? 'text-emerald-600' : 'text-slate-400'} />
+          <div style={{ textAlign: 'center', pointerEvents: 'none' }}>
+            <div style={{ margin: '0 auto 1rem', width: '56px', height: '56px', borderRadius: '50%', background: isDragging ? 'rgba(0,113,227,0.1)' : 'rgba(0,0,0,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <UploadCloud size={28} style={{ color: isDragging ? 'var(--primary-color)' : 'var(--text-light)' }} />
             </div>
-            <h3 className="text-lg font-bold mb-1 text-slate-700">
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: '0.25rem' }}>
               {isDragging ? '松开鼠标即可添加' : '将新作品拖拽到这里，或点击选择'}
             </h3>
-            <p className="text-slate-400 text-sm">支持 PDF, Word, 图片, 视频等常用格式</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>支持 PDF, Word, 图片, 视频等常用格式</p>
           </div>
         ) : (
-          <div className="w-full" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center gap-6">
+          <div style={{ width: '100%' }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
               {/* 文件信息块 */}
-              <div className="flex-1 bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center gap-4 relative group">
-                <div className="w-12 h-12 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                  <FileType size={24} />
+              <div className="group" style={{ flex: 1, background: 'rgba(0,0,0,0.03)', padding: '1rem', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'rgba(0,113,227,0.1)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <FileType size={20} />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-slate-700 truncate pr-8" title={file.name}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h4 style={{ fontWeight: 600, color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '2rem' }} title={file.name}>
                     {file.name}
                   </h4>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     <span>{formatFileSize(file.size)}</span>
-                    <span className="flex items-center gap-1 text-emerald-600 font-medium">
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--primary-color)', fontWeight: 500 }}>
                       <CheckCircle size={12} /> 待保存
                     </span>
                   </div>
                 </div>
                 <button 
                   onClick={removeFile}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', padding: '6px', color: 'var(--text-light)', background: 'transparent', border: 'none', borderRadius: '50%', cursor: 'pointer', transition: 'all 0.2s' }}
                   title="移除文件"
+                  onMouseEnter={(e) => { e.currentTarget.style.color = '#ff3b30'; e.currentTarget.style.background = 'rgba(255, 59, 48, 0.1)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-light)'; e.currentTarget.style.background = 'transparent'; }}
                 >
                   <X size={16} />
                 </button>
               </div>
 
               {/* 信息补全与保存 */}
-              <div className="flex-1 flex gap-3">
+              <div style={{ flex: 1, display: 'flex', gap: '12px' }}>
                 <input 
                   type="text" 
                   name="title" 
-                  className="flex-1 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm" 
+                  className="form-input" 
+                  style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.1)', background: 'rgba(255,255,255,0.5)', outline: 'none' }}
                   placeholder="作品名称" 
                   value={formData.title} 
                   onChange={handleChange} 
                 />
                 <select 
                   name="type" 
-                  className="w-32 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm" 
+                  className="form-select"
+                  style={{ width: '120px', padding: '0.75rem', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.1)', background: 'rgba(255,255,255,0.5)', outline: 'none' }}
                   value={formData.type} 
                   onChange={handleChange}
                 >
@@ -196,12 +202,10 @@ const WorkLibrary = () => {
                 <button 
                   onClick={handleSave}
                   disabled={saving}
-                  className={`flex items-center gap-2 px-6 rounded-xl font-bold transition-all
-                    ${saving 
-                      ? 'bg-slate-200 text-slate-400 cursor-not-allowed' 
-                      : 'bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-lg hover:-translate-y-0.5'}`}
+                  className="btn-primary"
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0 1.25rem', borderRadius: '12px', opacity: saving ? 0.6 : 1, cursor: saving ? 'not-allowed' : 'pointer' }}
                 >
-                  {saving ? '保存中...' : <><Save size={18} /> 保存</>}
+                  {saving ? '保存中...' : <><Save size={16} /> 保存</>}
                 </button>
               </div>
             </div>
@@ -210,89 +214,87 @@ const WorkLibrary = () => {
       </div>
 
       {/* ================= 列表区域 ================= */}
-      <div className="card mb-8 p-4">
-        <div className="flex gap-4 items-center">
-          <div className="form-group mb-0 flex-1 relative">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input 
-              type="text" 
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm transition-all" 
-              placeholder="搜索作品名称或关键词..." 
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="w-40">
-            <select 
-              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500 transition-all" 
-              value={filterType}
-              onChange={e => setFilterType(e.target.value)}
-            >
-              <option value="全部">全部类型</option>
-              <option value="图文作品">图文作品</option>
-              <option value="短视频作品">短视频作品</option>
-              <option value="策划案">策划案</option>
-              <option value="视觉设计作品">视觉设计作品</option>
-            </select>
-          </div>
-          <div className="w-40">
-            <select 
-              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500 transition-all" 
-              value={filterTag}
-              onChange={e => setFilterTag(e.target.value)}
-            >
-              <option value="">全部能力标签</option>
-              {allTags.map((tag, idx) => (
-                <option key={idx} value={tag}>{tag}</option>
-              ))}
-            </select>
-          </div>
+      <div className="card" style={{ padding: '1rem', marginBottom: '2rem', display: 'flex', gap: '1rem', border: 'none' }}>
+        <div style={{ flex: 1, position: 'relative' }}>
+          <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <input 
+            type="text" 
+            style={{ width: '100%', padding: '0.6rem 1rem 0.6rem 2.2rem', borderRadius: '10px', border: '1px solid rgba(0,0,0,0.1)', background: 'rgba(255,255,255,0.6)', outline: 'none', fontSize: '0.85rem' }} 
+            placeholder="搜索作品名称或关键词..." 
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div style={{ width: '160px' }}>
+          <select 
+            style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', border: '1px solid rgba(0,0,0,0.1)', background: 'rgba(255,255,255,0.6)', outline: 'none', fontSize: '0.85rem' }} 
+            value={filterType}
+            onChange={e => setFilterType(e.target.value)}
+          >
+            <option value="全部">全部类型</option>
+            <option value="图文作品">图文作品</option>
+            <option value="短视频作品">短视频作品</option>
+            <option value="策划案">策划案</option>
+            <option value="视觉设计作品">视觉设计作品</option>
+          </select>
+        </div>
+        <div style={{ width: '160px' }}>
+          <select 
+            style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', border: '1px solid rgba(0,0,0,0.1)', background: 'rgba(255,255,255,0.6)', outline: 'none', fontSize: '0.85rem' }} 
+            value={filterTag}
+            onChange={e => setFilterTag(e.target.value)}
+          >
+            <option value="">全部能力标签</option>
+            {allTags.map((tag, idx) => (
+              <option key={idx} value={tag}>{tag}</option>
+            ))}
+          </select>
         </div>
       </div>
 
       {filteredWorks.length === 0 ? (
-        <div className="card flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-            <FolderPlus size={32} className="text-slate-300" />
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '6rem 0', textAlign: 'center', border: 'none' }}>
+          <div style={{ width: '64px', height: '64px', background: 'rgba(0,0,0,0.03)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+            <FolderPlus size={32} style={{ color: 'var(--text-light)' }} />
           </div>
-          <h3 className="text-lg font-bold text-slate-700 mb-2">没有找到相关作品</h3>
-          <p className="text-slate-400 text-sm">您可以尝试调整筛选条件，或者在上方拖拽上传新的作品。</p>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: '0.5rem' }}>没有找到相关作品</h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>您可以尝试调整筛选条件，或者在上方拖拽上传新的作品。</p>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-6">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
           {filteredWorks.map(work => (
-            <div key={work.id} className="card flex flex-col h-full hover:shadow-lg transition-all duration-300 border-t-4 border-t-slate-200 hover:border-t-emerald-500 p-5">
-              <div className="flex-1">
-                <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-bold text-lg leading-tight line-clamp-2 text-slate-800" title={work.title}>{work.title}</h3>
+            <div key={work.id} className="card" style={{ display: 'flex', flexDirection: 'column', padding: '1.5rem', border: 'none' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                  <h3 style={{ fontWeight: 600, fontSize: '1.1rem', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={work.title}>{work.title}</h3>
                 </div>
-                <div className="flex gap-2 mb-4">
-                  <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">{work.type}</span>
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '1rem' }}>
+                  <span className="chip">{work.type}</span>
                   {work.materials && (
-                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-600 border border-emerald-100 line-clamp-1 max-w-[120px]" title={work.materials}>
+                    <span className="chip" style={{ background: 'rgba(0, 113, 227, 0.08)', color: 'var(--primary-color)' }} title={work.materials}>
                       📄 {work.materials}
                     </span>
                   )}
                 </div>
                 
-                <div className="mb-4">
-                  <p className="text-xs text-slate-400 mb-1.5 font-medium">作品履历标签</p>
-                  <div className="flex flex-wrap gap-1.5">
+                <div style={{ marginBottom: '1rem' }}>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 500 }}>作品履历标签</p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                     {work.tags?.length > 0 ? work.tags.slice(0, 3).map((tag, idx) => (
-                      <span key={idx} className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-50 text-slate-500 border border-slate-200">{tag}</span>
+                      <span key={idx} className="chip" style={{ fontSize: '0.7rem', padding: '0.2rem 0.6rem' }}>{tag}</span>
                     )) : (
-                      <span className="text-xs text-slate-400 flex items-center gap-1"><AlertCircle size={12}/> 未生成标签</span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-light)', display: 'flex', alignItems: 'center', gap: '4px' }}><AlertCircle size={12}/> 未生成标签</span>
                     )}
-                    {work.tags?.length > 3 && <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-50 text-slate-500 border border-slate-200">+{work.tags.length - 3}</span>}
+                    {work.tags?.length > 3 && <span className="chip" style={{ fontSize: '0.7rem', padding: '0.2rem 0.6rem' }}>+{work.tags.length - 3}</span>}
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 mt-auto flex justify-between items-center gap-3">
-                <Link to={`/ai?workId=${work.id}`} className="flex-1 py-1.5 text-center rounded-lg text-xs font-medium bg-slate-50 text-slate-600 hover:bg-slate-100 transition-colors border border-slate-200">
-                  <Sparkles size={12} className="inline mr-1 text-emerald-500" /> AI 提炼话术
+              <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.05)', marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                <Link to={`/ai?workId=${work.id}`} style={{ flex: 1, padding: '0.5rem', textAlign: 'center', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 500, background: 'rgba(0,0,0,0.04)', color: 'var(--text-main)', textDecoration: 'none' }}>
+                  <Sparkles size={12} style={{ display: 'inline', marginRight: '4px', color: 'var(--primary-color)' }} /> AI 提炼话术
                 </Link>
-                <Link to={`/details/${work.id}`} className="flex-1 py-1.5 text-center rounded-lg text-xs font-medium bg-slate-800 text-white hover:bg-slate-700 transition-colors">
+                <Link to={`/details/${work.id}`} style={{ flex: 1, padding: '0.5rem', textAlign: 'center', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 500, background: 'var(--primary-color)', color: 'white', textDecoration: 'none' }}>
                   查看详情
                 </Link>
               </div>

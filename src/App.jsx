@@ -72,36 +72,35 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="sidebar" style={{ color: 'rgba(255,255,255,0.7)' }}>
+    <div className="sidebar">
       {/* Brand */}
       <div style={{ padding: '0.5rem 0.75rem', marginBottom: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
           <div style={{
-            width: '36px', height: '36px', borderRadius: '12px',
-            background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+            width: '32px', height: '32px', borderRadius: '8px',
+            background: 'var(--primary-color)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
+            boxShadow: '0 2px 8px rgba(0, 113, 227, 0.3)',
           }}>
-            <Sparkles size={18} color="white" />
+            <Sparkles size={16} color="white" />
           </div>
           <div>
             <h1 style={{
-              fontSize: '1.1rem', fontWeight: 800, lineHeight: 1.2,
-              background: 'linear-gradient(135deg, #e0e7ff, #c4b5fd)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
+              fontSize: '1.1rem', fontWeight: 700, lineHeight: 1.2,
+              color: 'var(--text-main)',
+              letterSpacing: '-0.02em'
             }}>
               让作品会说话
             </h1>
           </div>
         </div>
-        <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', paddingLeft: '46px', marginTop: '-2px' }}>
-          传媒生作品集成长助手
+        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', paddingLeft: '42px', marginTop: '-2px' }}>
+          传媒生作品集助手
         </p>
       </div>
 
       {/* Navigation */}
-      <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1 }}>
         {navItems.map((item) => {
           const isActive = path === item.path || (item.path !== '/' && path.startsWith(item.path));
           return (
@@ -110,33 +109,32 @@ const Sidebar = () => {
               to={item.path}
               style={{
                 display: 'flex', alignItems: 'center', gap: '12px', 
-                padding: '0.7rem 0.85rem', borderRadius: '0.7rem', 
-                transition: 'all 0.25s ease',
+                padding: '0.6rem 0.85rem', borderRadius: '8px', 
+                transition: 'all 0.2s ease',
                 background: isActive 
-                  ? 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.15))' 
+                  ? 'rgba(0,0,0,0.06)' 
                   : 'transparent',
-                color: isActive ? '#e0e7ff' : 'rgba(255,255,255,0.55)',
-                fontWeight: isActive ? 600 : 450,
+                color: isActive ? 'var(--text-main)' : 'var(--text-muted)',
+                fontWeight: isActive ? 600 : 500,
                 fontSize: '0.9rem',
-                borderLeft: isActive ? '3px solid #818cf8' : '3px solid transparent',
-                boxShadow: isActive ? '0 0 20px rgba(99, 102, 241, 0.1)' : 'none',
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
-                  e.currentTarget.style.color = 'rgba(255,255,255,0.85)';
-                  e.currentTarget.style.borderLeftColor = 'rgba(129, 140, 248, 0.4)';
+                  e.currentTarget.style.background = 'rgba(0,0,0,0.03)';
+                  e.currentTarget.style.color = 'var(--text-main)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = 'rgba(255,255,255,0.55)';
-                  e.currentTarget.style.borderLeftColor = 'transparent';
+                  e.currentTarget.style.color = 'var(--text-muted)';
                 }
               }}
             >
-              {item.icon}
+              {React.cloneElement(item.icon, { 
+                color: isActive ? 'var(--primary-color)' : 'currentColor',
+                size: 18
+              })}
               <span>{item.label}</span>
             </Link>
           );
@@ -146,31 +144,30 @@ const Sidebar = () => {
       {/* Divider */}
       <div style={{
         height: '1px', margin: '1rem 0',
-        background: 'linear-gradient(90deg, transparent, rgba(99,102,241,0.3), transparent)',
+        background: 'rgba(0,0,0,0.06)',
       }} />
       
       {/* User Profile */}
       <div style={{
-        padding: '1rem',
-        background: 'rgba(255,255,255,0.04)',
-        borderRadius: '0.85rem',
-        border: '1px solid rgba(255,255,255,0.06)',
+        padding: '0.75rem',
+        background: 'transparent',
+        borderRadius: '8px',
+        border: '1px solid transparent',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
           <div style={{
-            width: '38px', height: '38px', borderRadius: '50%',
-            background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+            width: '32px', height: '32px', borderRadius: '50%',
+            background: 'var(--primary-color)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'white', fontWeight: 'bold', fontSize: '14px', flexShrink: 0,
-            boxShadow: '0 2px 10px rgba(99, 102, 241, 0.3)',
+            color: 'white', fontWeight: 'bold', fontSize: '12px', flexShrink: 0,
           }}>
             {user?.username?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
-            <span style={{ fontSize: '13px', fontWeight: 600, lineHeight: 1.3, color: '#e2e8f0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, lineHeight: 1.3, color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user?.username || '用户'}
             </span>
-            <span style={{ fontSize: '11px', lineHeight: 1.3, color: 'rgba(255,255,255,0.35)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: '11px', lineHeight: 1.3, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user?.email || ''}
             </span>
           </div>
@@ -179,24 +176,18 @@ const Sidebar = () => {
           onClick={logout}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-            width: '100%', padding: '0.55rem',
-            background: 'transparent',
-            border: '1px solid rgba(239, 68, 68, 0.2)',
-            borderRadius: '0.5rem', color: 'rgba(239, 68, 68, 0.7)',
-            fontSize: '0.78rem', fontWeight: 500, cursor: 'pointer',
-            transition: 'all 0.25s ease', fontFamily: 'inherit',
+            width: '100%', padding: '0.5rem',
+            background: 'rgba(255, 59, 48, 0.08)',
+            border: 'none',
+            borderRadius: '6px', color: '#ff3b30',
+            fontSize: '0.8rem', fontWeight: 500, cursor: 'pointer',
+            transition: 'all 0.2s ease', fontFamily: 'inherit',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
-            e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-            e.currentTarget.style.color = '#f87171';
-            e.currentTarget.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.1)';
+            e.currentTarget.style.background = 'rgba(255, 59, 48, 0.15)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.2)';
-            e.currentTarget.style.color = 'rgba(239, 68, 68, 0.7)';
-            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.background = 'rgba(255, 59, 48, 0.08)';
           }}
         >
           <LogOut size={14} />
