@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PortfolioContext } from '../context/PortfolioContext';
+import { AuthContext } from '../context/AuthContext';
 import { simulateAIGeneration } from '../utils/aiSimulator';
 import { Wand2, Copy, Check, Info, FileText, MessageSquare, Lightbulb } from 'lucide-react';
 
@@ -10,7 +11,7 @@ const AIOptimization = () => {
   const defaultType = searchParams.get('type') || 'description';
   
   const { works, updateWork } = useContext(PortfolioContext);
-  const navigate = useNavigate();
+  const { token } = useContext(AuthContext);
 
   const [selectedWorkId, setSelectedWorkId] = useState(initialWorkId || '');
   const [activeTab, setActiveTab] = useState(defaultType);
@@ -29,15 +30,44 @@ const AIOptimization = () => {
     if (!selectedWork) return;
     setGenerating(true);
     
-    const result = await simulateAIGeneration(selectedWork);
-    
-    // 更新作品数据，保存生成的文本
-    updateWork(selectedWork.id, {
-      projectDescription: result.projectDescription,
-      interviewScript: result.interviewScript,
-      optimized: true,
-      suggestions: result.suggestions
-    });
+    try {
+      const API_BASE = import.meta.env.VITE_API_URL || '/api';
+      const response = await fetch(`${API_BASE}/ai/optimize`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}` // Direct read for simplicity
+        },
+        body: JSON.stringify({
+          title: selectedWork.title,
+          type: selectedWork.type,
+          materials: selectedWork.materials
+        })
+      });
+
+      if (!response.ok) throw new Error('AI 生成失败');
+      
+      const result = await response.json();
+      
+      // 更新作品数据，保存生成的文本
+      updateWork(selectedWork.id, {
+        projectDescription: result.projectDescription,
+        interviewScript: result.interviewScript,
+        background: result.background,
+        role: result.role,
+        idea: result.idea,
+        process: result.process,
+        highlights: result.highlights,
+        tags: result.tags,
+        jobs: result.jobs,
+        matchReasons: result.matchReasons,
+        optimized: true,
+        suggestions: ["你的作品已经被 AI 全面提取和优化，可以直接在简历和面试中使用了！"]
+      });
+    } catch (error) {
+      console.error(error);
+      alert('AI 优化失败，请检查网络或后端配置。');
+    }
     
     setGenerating(false);
   };
