@@ -15,7 +15,7 @@ const openai = new OpenAI({
 router.use(authMiddleware);
 
 router.post('/optimize', async (req, res) => {
-  const { title, type, materials, role, tools, background, idea, process, highlights, dataFeedback } = req.body;
+  const { title, type, materials, role, tools, background, idea, process, highlights, dataFeedback, coverImage } = req.body;
 
   if (!title) {
     return res.status(400).json({ message: '缺少作品名称' });
@@ -65,16 +65,33 @@ router.post('/optimize', async (req, res) => {
 
 请严格基于以上已有素材进行润色，返回纯 JSON 格式。禁止编造原文中没有的信息。`;
 
+    // 根据是否有图片，构建不同的请求内容格式
+    let userMessageContent;
+    if (coverImage) {
+      userMessageContent = [
+        { type: "text", text: userPrompt },
+        { type: "image_url", image_url: { url: coverImage } }
+      ];
+    } else {
+      userMessageContent = userPrompt;
+    }
+
     // 3. 调用 AI 大模型
-    const response = await openai.chat.completions.create({
+    const apiOptions = {
       model: process.env.AI_MODEL || 'deepseek-chat',
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
+        { role: 'user', content: userMessageContent }
       ],
-      temperature: 0.4,
-      response_format: { type: "json_object" } // 强制返回 JSON (某些模型可能不支持，这里先保守使用普通模式配合提示词)
-    });
+      temperature: 0.4
+    };
+
+    // 仅在纯文本模式下强行指定 JSON (部分视觉模型不支持该参数)
+    if (!coverImage) {
+      apiOptions.response_format = { type: "json_object" };
+    }
+
+    const response = await openai.chat.completions.create(apiOptions);
 
     let resultText = response.choices[0].message.content.trim();
     

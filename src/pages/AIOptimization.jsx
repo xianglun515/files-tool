@@ -48,7 +48,8 @@ const AIOptimization = () => {
           idea: selectedWork.idea,
           process: selectedWork.process,
           highlights: selectedWork.highlights,
-          dataFeedback: selectedWork.dataFeedback
+          dataFeedback: selectedWork.dataFeedback,
+          coverImage: selectedWork.coverImage
         })
       });
 
