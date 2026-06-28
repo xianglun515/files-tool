@@ -15,7 +15,7 @@ const openai = new OpenAI({
 router.use(authMiddleware);
 
 router.post('/optimize', async (req, res) => {
-  const { title, type, materials, role, tools, background, idea, process, highlights, dataFeedback, coverImage } = req.body;
+  const { title, type, materials, role, tools, background, idea, process: projectProcess, highlights, dataFeedback, coverImage } = req.body;
 
   if (!title) {
     return res.status(400).json({ message: '缺少作品名称' });
@@ -59,7 +59,7 @@ router.post('/optimize', async (req, res) => {
 使用工具：${tools || '未提供'}
 项目背景：${background || '未提供'}
 核心创意：${idea || '未提供'}
-执行过程：${process || '未提供'}
+执行过程：${projectProcess || '未提供'}
 成果亮点：${highlights || '未提供'}
 数据反馈：${dataFeedback || '未提供'}
 
@@ -183,7 +183,7 @@ router.post('/optimize', async (req, res) => {
   } catch (err) {
     console.error('AI 优化失败:', err);
     // 提取 OpenAI 格式或原生 Fetch 格式的报错信息并传给前端
-    const errMsg = err.response?.data?.error?.message || err.message || '未知错误';
+    const errMsg = err.response?.data?.error?.message || err.stack || err.message || '未知错误';
     res.status(500).json({ message: 'AI 生成失败: ' + errMsg });
   }
 });
