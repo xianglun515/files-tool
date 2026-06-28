@@ -110,12 +110,45 @@ const WorkDetails = () => {
                 {(work.tags || []).length > 0 ? (
                   work.tags.map((tag, idx) => <span key={idx} className="chip bg-white">{tag}</span>)
                 ) : (
-                  <span className="text-sm text-muted">待提炼</span>
+                  <span className="text-sm text-muted">尚未进行AI分析</span>
+                )}
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-xs font-bold text-muted mb-2 uppercase tracking-wider">推荐适配岗位</h3>
+              <div className="flex flex-wrap gap-2">
+                {(work.jobs || []).length > 0 ? (
+                  work.jobs.map((job, idx) => <span key={idx} className="chip chip-success bg-white">{job}</span>)
+                ) : (
+                  <span className="text-sm text-muted">尚未进行AI分析</span>
                 )}
               </div>
             </div>
           </div>
 
+          <div className="card">
+            <h2 className="text-lg font-bold mb-4">内容生成</h2>
+            <p className="text-sm text-muted mb-6">一键将枯燥的描述转化为专业的求职表达。</p>
+            
+            <div className="space-y-3">
+              <Link to={`/ai?workId=${work.id}&type=description`} className="btn btn-primary w-full justify-between group">
+                <div className="flex items-center gap-2">
+                  <Wand2 size={18} />
+                  生成项目说明
+                </div>
+                <ArrowLeft size={16} className="rotate-180 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </Link>
+              
+              <Link to={`/ai?workId=${work.id}&type=interview`} className="btn btn-secondary w-full justify-between group">
+                <div className="flex items-center gap-2">
+                  <MessageSquare size={18} />
+                  生成面试讲述稿
+                </div>
+                <ArrowLeft size={16} className="rotate-180 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </Link>
+            </div>
+          </div>
 
 
           <div className="card">

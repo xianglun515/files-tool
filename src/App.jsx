@@ -17,6 +17,7 @@ import Dashboard from './pages/Dashboard';
 import WorkLibrary from './pages/WorkLibrary';
 import WorkDetails from './pages/WorkDetails';
 import JobMatching from './pages/JobMatching';
+import AIOptimization from './pages/AIOptimization';
 import MyPortfolio from './pages/MyPortfolio';
 import PortfolioPreview from './pages/PortfolioPreview';
 import AuthPage from './pages/AuthPage';
@@ -66,6 +67,7 @@ const Sidebar = () => {
   const navItems = [
     { path: '/', label: '首页总览', icon: <LayoutDashboard size={19} /> },
     { path: '/library', label: '作品库', icon: <Library size={19} /> },
+    { path: '/ai', label: '智能提取', icon: <Wand2 size={19} /> },
     { path: '/portfolio', label: '我的作品集', icon: <FolderKanban size={19} /> },
   ];
 
@@ -218,6 +220,7 @@ const AppContent = () => {
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/library" element={<ProtectedRoute><WorkLibrary /></ProtectedRoute>} />
           <Route path="/details/:id" element={<ProtectedRoute><WorkDetails /></ProtectedRoute>} />
+          <Route path="/ai" element={<ProtectedRoute><AIOptimization /></ProtectedRoute>} />
           <Route path="/portfolio" element={<ProtectedRoute><MyPortfolio /></ProtectedRoute>} />
           <Route path="/preview" element={<ProtectedRoute><PortfolioPreview /></ProtectedRoute>} />
         </Routes>

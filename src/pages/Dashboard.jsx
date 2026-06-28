@@ -31,6 +31,8 @@ const Dashboard = () => {
   works.forEach(w => w.jobs?.forEach(job => uniqueJobs.add(job)));
   const totalJobs = uniqueJobs.size;
 
+  const pendingOptWorks = works.filter(w => !w.optimized).length;
+
   const statCards = [
     { 
       title: '作品总数', value: totalWorks, 
@@ -50,10 +52,17 @@ const Dashboard = () => {
       color: 'var(--accent-color)',
       bgLight: 'rgba(52, 199, 89, 0.1)',
     },
+    { 
+      title: '待优化项', value: pendingOptWorks, 
+      icon: <AlertCircle size={22} />,
+      color: 'var(--accent-warm)',
+      bgLight: 'rgba(255, 149, 0, 0.1)',
+    },
   ];
 
   const quickLinks = [
     { name: '作品管理', desc: '上传与管理所有作品', path: '/library', icon: <Library size={24} />, color: 'var(--primary-color)' },
+    { name: '智能提取', desc: '提炼面试话术', path: '/ai', icon: <Wand2 size={24} />, color: '#af52de' },
     { name: '岗位匹配', desc: '寻找最适合的工作', path: '/jobs', icon: <Briefcase size={24} />, color: 'var(--accent-color)' },
     { name: '我的作品集', desc: '精选展示给面试官', path: '/portfolio', icon: <FolderKanban size={24} />, color: 'var(--accent-warm)' },
   ];
