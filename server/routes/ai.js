@@ -6,8 +6,9 @@ const router = express.Router();
 
 // 1. 初始化 OpenAI 客户端
 // 兼容 OpenAI 格式，但通过 BASE_URL 支持国内模型（如 DeepSeek, Kimi, 通义千问等）
+// 如果环境变量未设置，使用 'missing_key' 占位，防止服务器在启动时直接崩溃
 const openai = new OpenAI({
-  apiKey: process.env.AI_API_KEY,
+  apiKey: process.env.AI_API_KEY || 'missing_key',
   baseURL: process.env.AI_BASE_URL || 'https://api.deepseek.com/v1', 
 });
 
@@ -21,6 +22,10 @@ router.post('/optimize', async (req, res) => {
   }
 
   try {
+    if (openai.apiKey === 'missing_key') {
+      return res.status(500).json({ message: '未配置大模型 API Key。请在 Render 后台的 Environment 变量中配置 AI_API_KEY。' });
+    }
+
     // 2. 编写系统提示词 (Prompt Engineering)
     const systemPrompt = `你现在是一位资深的资深大厂 HR 兼传媒类作品集辅导专家。
 你的任务是根据用户提供的简短【作品名称】和【作品类型】，发挥合理的专业想象，自动为其生成一份极其惊艳、符合 STAR 法则（情境、任务、行动、结果）的详细项目履历。
