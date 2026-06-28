@@ -2,9 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
 
 :root {
-  /* Apple-like Light & Airy Palette */
-  --primary-color: #0071e3; /* Apple Blue */
-  --primary-hover: #0077ED;
+  /* Minimalist Premium Palette */
+  --primary-color: #111111; /* Solid Black */
+  --primary-hover: #333333; /* Dark Gray */
   --secondary-color: #5E5E5E; 
   --accent-color: #34c759; /* Apple Green */
   --accent-warm: #ff9500; /* Apple Orange */
@@ -48,7 +48,7 @@
   --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.04);
   --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.06);
   --shadow-xl: 0 30px 60px rgba(0, 0, 0, 0.08);
-  --shadow-colored: 0 8px 24px rgba(0, 113, 227, 0.25);
+  --shadow-colored: 0 8px 24px rgba(0, 0, 0, 0.15);
   --shadow-glow: 0 0 0 transparent;
   
   /* Animations */
@@ -138,7 +138,7 @@ button {
 .btn-primary {
   background: var(--primary-color);
   color: white;
-  box-shadow: 0 4px 14px rgba(0, 113, 227, 0.2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
   border: none;
   position: relative;
   overflow: hidden;
@@ -367,15 +367,14 @@ button {
 
 /* AI Alert Premium */
 .ai-alert {
-  background: linear-gradient(to right, rgba(99,102,241,0.05), rgba(168,85,247,0.05));
+  background: #f8f9fa;
   border-left: 4px solid var(--primary-color);
   padding: 1.25rem;
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
   display: flex;
   gap: 1rem;
   font-size: 0.9rem;
-  color: #3730a3;
-  backdrop-filter: blur(8px);
+  color: #444444;
 }
 
 /* --- Tailwind Utility Emulations --- */
