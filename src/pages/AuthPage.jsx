@@ -1,4 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Mail, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
 
@@ -14,7 +15,15 @@ const AuthPage = () => {
   const [formSuccess, setFormSuccess] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const { login, register } = useContext(AuthContext);
+  const { user, login, register } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // 当 user 状态变为存在时，自动跳转到首页
+  useEffect(() => {
+    if (user) {
+      navigate('/', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
