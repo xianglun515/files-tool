@@ -7,14 +7,15 @@ import {
   Tag, 
   Target, 
   AlertCircle,
-  PlusCircle,
+  Briefcase,
   Library,
   Wand2,
   FolderKanban,
   ChevronRight,
   ArrowUpRight,
-  Zap,
-  TrendingUp
+  Sparkles,
+  TrendingUp,
+  FolderPlus
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -36,16 +37,16 @@ const Dashboard = () => {
     { 
       title: '作品总数', value: totalWorks, 
       icon: <FileText size={22} />,
-      gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-      bgLight: 'rgba(59, 130, 246, 0.08)',
-      shadowColor: 'rgba(59, 130, 246, 0.2)',
+      gradient: 'linear-gradient(135deg, #475569, #334155)',
+      bgLight: 'rgba(71, 85, 105, 0.08)',
+      shadowColor: 'rgba(71, 85, 105, 0.2)',
     },
     { 
       title: '能力标签', value: totalTags, 
       icon: <Tag size={22} />,
-      gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-      bgLight: 'rgba(139, 92, 246, 0.08)',
-      shadowColor: 'rgba(139, 92, 246, 0.2)',
+      gradient: 'linear-gradient(135deg, #64748b, #475569)',
+      bgLight: 'rgba(100, 116, 139, 0.08)',
+      shadowColor: 'rgba(100, 116, 139, 0.2)',
     },
     { 
       title: '适配岗位', value: totalJobs, 
@@ -57,17 +58,17 @@ const Dashboard = () => {
     { 
       title: '待优化项', value: pendingOptWorks, 
       icon: <AlertCircle size={22} />,
-      gradient: 'linear-gradient(135deg, #f59e0b, #d97706)',
-      bgLight: 'rgba(245, 158, 11, 0.08)',
-      shadowColor: 'rgba(245, 158, 11, 0.2)',
+      gradient: 'linear-gradient(135deg, #d97706, #b45309)',
+      bgLight: 'rgba(217, 119, 6, 0.08)',
+      shadowColor: 'rgba(217, 119, 6, 0.2)',
     },
   ];
 
   const quickLinks = [
-    { name: '添加作品', desc: '拖拽上传极简操作', path: '/add', icon: <PlusCircle size={22} />, gradient: 'linear-gradient(135deg, #3b82f6, #6366f1)' },
-    { name: '作品库', desc: '管理你的全部作品', path: '/library', icon: <Library size={22} />, gradient: 'linear-gradient(135deg, #8b5cf6, #a855f7)' },
-    { name: 'AI优化', desc: '一键生成面试话术', path: '/ai', icon: <Wand2 size={22} />, gradient: 'linear-gradient(135deg, #ec4899, #f43f5e)' },
-    { name: '我的作品集', desc: '精选展示给面试官', path: '/portfolio', icon: <FolderKanban size={22} />, gradient: 'linear-gradient(135deg, #10b981, #14b8a6)' },
+    { name: '作品管理', desc: '上传与管理所有作品', path: '/library', icon: <Library size={22} />, gradient: 'linear-gradient(135deg, #334155, #1e293b)' },
+    { name: 'AI优化', desc: '一键生成面试话术', path: '/ai', icon: <Wand2 size={22} />, gradient: 'linear-gradient(135deg, #475569, #334155)' },
+    { name: '岗位匹配', desc: '寻找最适合的工作', path: '/jobs', icon: <Briefcase size={22} />, gradient: 'linear-gradient(135deg, #10b981, #059669)' },
+    { name: '我的作品集', desc: '精选展示给面试官', path: '/portfolio', icon: <FolderKanban size={22} />, gradient: 'linear-gradient(135deg, #0f172a, #020617)' },
   ];
 
   const getGreeting = () => {
@@ -81,7 +82,7 @@ const Dashboard = () => {
     <div className="animate-fade-in">
       {/* Welcome Banner */}
       <div style={{
-        background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4338ca 60%, #6366f1 100%)',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
         borderRadius: '1.5rem',
         padding: '2.5rem',
         marginBottom: '2rem',
@@ -93,22 +94,22 @@ const Dashboard = () => {
         <div style={{
           position: 'absolute', top: '-30px', right: '-20px',
           width: '200px', height: '200px', borderRadius: '50%',
-          background: 'rgba(255,255,255,0.06)',
+          background: 'rgba(255,255,255,0.03)',
         }} />
         <div style={{
           position: 'absolute', bottom: '-40px', right: '100px',
           width: '150px', height: '150px', borderRadius: '50%',
-          background: 'rgba(255,255,255,0.04)',
+          background: 'rgba(16, 185, 129, 0.05)',
         }} />
         <div style={{
           position: 'absolute', top: '20px', right: '200px',
           width: '60px', height: '60px', borderRadius: '50%',
-          background: 'rgba(255,255,255,0.05)',
+          background: 'rgba(255,255,255,0.02)',
         }} />
 
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <Zap size={18} style={{ color: '#fbbf24' }} />
+            <Sparkles size={18} style={{ color: '#10b981' }} />
             <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', fontWeight: 500, letterSpacing: '0.05em' }}>
               PORTFOLIO DASHBOARD
             </span>
@@ -217,7 +218,7 @@ const Dashboard = () => {
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a' }}>最近更新作品</h2>
-          <Link to="/library" style={{ fontSize: '0.85rem', color: '#6366f1', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
+          <Link to="/library" style={{ fontSize: '0.85rem', color: '#334155', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
             查看全部 <ChevronRight size={16} />
           </Link>
         </div>
@@ -230,7 +231,7 @@ const Dashboard = () => {
               padding: '1.5rem',
               border: '1px solid rgba(255,255,255,0.6)',
               borderLeft: '4px solid',
-              borderImage: 'linear-gradient(180deg, #6366f1, #a855f7) 1',
+              borderImage: 'linear-gradient(180deg, #334155, #64748b) 1',
               transition: 'all 0.3s ease',
             }}
             onMouseEnter={(e) => {
@@ -243,11 +244,11 @@ const Dashboard = () => {
             }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                <h3 style={{ fontWeight: 700, fontSize: '1.05rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '70%' }} title={work.title}>{work.title}</h3>
+                <h3 style={{ fontWeight: 700, fontSize: '1.05rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '70%', color: '#1e293b' }} title={work.title}>{work.title}</h3>
                 <span style={{
                   padding: '0.2rem 0.7rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 600,
-                  background: 'linear-gradient(135deg, rgba(99,102,241,0.1), rgba(168,85,247,0.1))',
-                  color: '#6366f1', border: '1px solid rgba(99,102,241,0.15)',
+                  background: 'rgba(51, 65, 85, 0.08)',
+                  color: '#334155', border: '1px solid rgba(51, 65, 85, 0.15)',
                 }}>{work.type}</span>
               </div>
               <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '2.5rem' }}>
@@ -257,14 +258,14 @@ const Dashboard = () => {
                 {work.tags?.slice(0, 3).map((tag, idx) => (
                   <span key={idx} style={{
                     padding: '0.15rem 0.6rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 500,
-                    background: '#f1f5f9', color: '#64748b',
+                    background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0'
                   }}>{tag}</span>
                 ))}
-                {work.tags?.length > 3 && <span style={{ padding: '0.15rem 0.6rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 500, background: '#f1f5f9', color: '#64748b' }}>+{work.tags.length - 3}</span>}
+                {work.tags?.length > 3 && <span style={{ padding: '0.15rem 0.6rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 500, background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>+{work.tags.length - 3}</span>}
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9' }}>
                 <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>完成于 {work.date || '—'}</span>
-                <Link to={`/details/${work.id}`} style={{ fontSize: '0.82rem', color: '#6366f1', fontWeight: 600, textDecoration: 'none' }}>查看详情</Link>
+                <Link to={`/details/${work.id}`} style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 600, textDecoration: 'none' }}>查看详情</Link>
               </div>
             </div>
           ))}
@@ -278,8 +279,8 @@ const Dashboard = () => {
               color: '#94a3b8',
               border: '2px dashed #e2e8f0',
             }}>
-              <PlusCircle size={40} style={{ margin: '0 auto 1rem', opacity: 0.4 }} />
-              <p style={{ fontSize: '1rem' }}>还没有任何作品，先去添加你的第一个作品吧！</p>
+              <FolderPlus size={40} style={{ margin: '0 auto 1rem', opacity: 0.4 }} />
+              <p style={{ fontSize: '1rem' }}>还没有任何作品，快去作品库添加吧！</p>
             </div>
           )}
         </div>
