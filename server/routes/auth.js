@@ -7,7 +7,8 @@ const router = express.Router();
 
 // 生成 JWT Token
 const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  const secret = process.env.JWT_SECRET || 'fallback_default_secret_key_12345!@#';
+  return jwt.sign({ id: userId }, secret, { expiresIn: '7d' });
 };
 
 // ==================== 注册 ====================
