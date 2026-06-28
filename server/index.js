@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 5000;
 
 // 中间件
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // API 路由
 app.use('/api/auth', authRoutes);

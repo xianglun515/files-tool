@@ -36,11 +36,23 @@ const WorkLibrary = () => {
     }
     setError('');
 
-    // 如果是图片，读取为 Base64 以供展示
+    // 如果是图片，压缩后转为 Base64
     if (selectedFile.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, coverImage: reader.result }));
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_W = 800;
+          let w = img.width, h = img.height;
+          if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W; }
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL('image/jpeg', 0.7);
+          setFormData(prev => ({ ...prev, coverImage: compressed }));
+        };
+        img.src = reader.result;
       };
       reader.readAsDataURL(selectedFile);
     } else {
