@@ -1,10 +1,10 @@
 import React, { useContext, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { PortfolioContext } from '../context/PortfolioContext';
-import { Search, Filter, FolderPlus, UploadCloud, FileType, CheckCircle, AlertCircle, X, Sparkles, Save } from 'lucide-react';
+import { Search, Filter, FolderPlus, UploadCloud, FileType, CheckCircle, AlertCircle, X, Sparkles, Save, Trash2 } from 'lucide-react';
 
 const WorkLibrary = () => {
-  const { works, togglePortfolio, addWork } = useContext(PortfolioContext);
+  const { works, togglePortfolio, addWork, deleteWork } = useContext(PortfolioContext);
   
   // ================= 1. 上传相关的状态 =================
   const fileInputRef = useRef(null);
@@ -117,6 +117,14 @@ const WorkLibrary = () => {
     const matchTag = filterTag === '' || (work.tags && work.tags.includes(filterTag));
     return matchSearch && matchType && matchTag;
   });
+
+  const handleDelete = async (id, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.confirm('确定要删除这个作品吗？此操作不可恢复。')) {
+      await deleteWork(id);
+    }
+  };
 
   return (
     <div className="animate-fade-in">
@@ -314,7 +322,16 @@ const WorkLibrary = () => {
                 )}
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                  <h3 style={{ fontWeight: 600, fontSize: '1.1rem', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={work.title}>{work.title}</h3>
+                  <h3 style={{ fontWeight: 600, fontSize: '1.1rem', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '1rem' }} title={work.title}>{work.title}</h3>
+                  <button 
+                    onClick={(e) => handleDelete(work.id, e)}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--text-light)', cursor: 'pointer', padding: '4px', flexShrink: 0, borderRadius: '4px', transition: 'all 0.2s' }}
+                    title="删除作品"
+                    onMouseEnter={(e) => { e.currentTarget.style.color = '#ff3b30'; e.currentTarget.style.background = 'rgba(255, 59, 48, 0.1)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-light)'; e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
                 <div style={{ display: 'flex', gap: '6px', marginBottom: '1rem' }}>
                   <span className="chip">{work.type}</span>
