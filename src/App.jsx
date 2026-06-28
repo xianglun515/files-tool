@@ -6,7 +6,8 @@ import {
   Library, 
   Wand2, 
   FolderKanban,
-  LogOut
+  LogOut,
+  Sparkles
 } from 'lucide-react';
 
 import { AuthContext } from './context/AuthContext';
@@ -30,17 +31,20 @@ const ProtectedRoute = ({ children }) => {
     return (
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        height: '100vh', fontSize: '1.1rem', color: '#64748b',
-        background: 'linear-gradient(135deg, #f0f4ff 0%, #faf5ff 50%, #fff1f2 100%)',
+        height: '100vh', fontSize: '1.1rem', color: '#94a3b8',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)',
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
-            width: '40px', height: '40px', border: '3px solid #e2e8f0',
-            borderTopColor: '#6366f1', borderRadius: '50%',
+            width: '48px', height: '48px',
+            border: '3px solid rgba(99, 102, 241, 0.2)',
+            borderTopColor: '#6366f1',
+            borderRadius: '50%',
             animation: 'spin 0.8s linear infinite',
-            margin: '0 auto 1rem',
+            margin: '0 auto 1.5rem',
+            boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)',
           }} />
-          <span>加载中...</span>
+          <span style={{ letterSpacing: '0.1em', fontWeight: 500 }}>加载中...</span>
         </div>
       </div>
     );
@@ -62,73 +66,113 @@ const Sidebar = () => {
   if (path === '/preview' || path === '/login') return null;
 
   const navItems = [
-    { path: '/', label: '首页总览', icon: <LayoutDashboard size={20} /> },
-    { path: '/add', label: '添加作品', icon: <PlusCircle size={20} /> },
-    { path: '/library', label: '作品库', icon: <Library size={20} /> },
-    { path: '/ai', label: 'AI优化', icon: <Wand2 size={20} /> },
-    { path: '/portfolio', label: '我的作品集', icon: <FolderKanban size={20} /> },
+    { path: '/', label: '首页总览', icon: <LayoutDashboard size={19} /> },
+    { path: '/add', label: '添加作品', icon: <PlusCircle size={19} /> },
+    { path: '/library', label: '作品库', icon: <Library size={19} /> },
+    { path: '/ai', label: 'AI优化', icon: <Wand2 size={19} /> },
+    { path: '/portfolio', label: '我的作品集', icon: <FolderKanban size={19} /> },
   ];
 
   return (
-    <div className="sidebar">
-      <div className="mb-6">
-        <h1 className="text-lg font-bold text-gradient" style={{ lineHeight: '1.2' }}>
-          让作品会说话
-        </h1>
-        <p className="text-sm text-muted mt-2">传媒生作品集成长助手</p>
+    <div className="sidebar" style={{ color: 'rgba(255,255,255,0.7)' }}>
+      {/* Brand */}
+      <div style={{ padding: '0.5rem 0.75rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+          <div style={{
+            width: '36px', height: '36px', borderRadius: '12px',
+            background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
+          }}>
+            <Sparkles size={18} color="white" />
+          </div>
+          <div>
+            <h1 style={{
+              fontSize: '1.1rem', fontWeight: 800, lineHeight: 1.2,
+              background: 'linear-gradient(135deg, #e0e7ff, #c4b5fd)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>
+              让作品会说话
+            </h1>
+          </div>
+        </div>
+        <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', paddingLeft: '46px', marginTop: '-2px' }}>
+          传媒生作品集成长助手
+        </p>
       </div>
+
+      {/* Navigation */}
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+        {navItems.map((item) => {
+          const isActive = path === item.path || (item.path !== '/' && path.startsWith(item.path));
+          return (
+            <Link 
+              key={item.path} 
+              to={item.path}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '12px', 
+                padding: '0.7rem 0.85rem', borderRadius: '0.7rem', 
+                transition: 'all 0.25s ease',
+                background: isActive 
+                  ? 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.15))' 
+                  : 'transparent',
+                color: isActive ? '#e0e7ff' : 'rgba(255,255,255,0.55)',
+                fontWeight: isActive ? 600 : 450,
+                fontSize: '0.9rem',
+                borderLeft: isActive ? '3px solid #818cf8' : '3px solid transparent',
+                boxShadow: isActive ? '0 0 20px rgba(99, 102, 241, 0.1)' : 'none',
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+                  e.currentTarget.style.color = 'rgba(255,255,255,0.85)';
+                  e.currentTarget.style.borderLeftColor = 'rgba(129, 140, 248, 0.4)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = 'rgba(255,255,255,0.55)';
+                  e.currentTarget.style.borderLeftColor = 'transparent';
+                }
+              }}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Divider */}
+      <div style={{
+        height: '1px', margin: '1rem 0',
+        background: 'linear-gradient(90deg, transparent, rgba(99,102,241,0.3), transparent)',
+      }} />
       
-      <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
-      {navItems.map((item) => {
-        const isActive = path === item.path || (item.path !== '/' && path.startsWith(item.path));
-        return (
-          <Link 
-            key={item.path} 
-            to={item.path}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '1rem', 
-              padding: '0.75rem 1rem', borderRadius: '0.75rem', 
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              background: isActive ? 'linear-gradient(135deg, rgba(99,102,241,0.1), rgba(168,85,247,0.1))' : 'transparent',
-              color: isActive ? 'var(--primary-color)' : 'var(--text-muted)',
-              fontWeight: isActive ? '600' : '500',
-              border: isActive ? '1px solid rgba(99,102,241,0.2)' : '1px solid transparent'
-            }}
-            onMouseEnter={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.5)';
-                e.currentTarget.style.color = 'var(--text-main)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isActive) {
-                e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.color = 'var(--text-muted)';
-              }
-            }}
-          >
-            {item.icon}
-            <span>{item.label}</span>
-          </Link>
-        );
-      })}
-    </nav>
-      
-      <div className="mt-auto pt-6 border-t border-gray-200">
+      {/* User Profile */}
+      <div style={{
+        padding: '1rem',
+        background: 'rgba(255,255,255,0.04)',
+        borderRadius: '0.85rem',
+        border: '1px solid rgba(255,255,255,0.06)',
+      }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
           <div style={{
-            width: '36px', height: '36px', borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--primary-color), var(--secondary-color))',
+            width: '38px', height: '38px', borderRadius: '50%',
+            background: 'linear-gradient(135deg, #6366f1, #a855f7)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'white', fontWeight: 'bold', fontSize: '14px', flexShrink: 0
+            color: 'white', fontWeight: 'bold', fontSize: '14px', flexShrink: 0,
+            boxShadow: '0 2px 10px rgba(99, 102, 241, 0.3)',
           }}>
             {user?.username?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
-            <span style={{ fontSize: '14px', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, lineHeight: 1.3, color: '#e2e8f0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user?.username || '用户'}
             </span>
-            <span className="text-muted" style={{ fontSize: '12px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: '11px', lineHeight: 1.3, color: 'rgba(255,255,255,0.35)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user?.email || ''}
             </span>
           </div>
@@ -136,23 +180,28 @@ const Sidebar = () => {
         <button
           onClick={logout}
           style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem',
-            width: '100%', padding: '0.6rem 1rem',
-            background: 'transparent', border: '1px solid #fee2e2',
-            borderRadius: '0.625rem', color: '#ef4444',
-            fontSize: '0.8rem', fontWeight: 500, cursor: 'pointer',
-            transition: 'all 0.2s ease', fontFamily: 'inherit',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+            width: '100%', padding: '0.55rem',
+            background: 'transparent',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            borderRadius: '0.5rem', color: 'rgba(239, 68, 68, 0.7)',
+            fontSize: '0.78rem', fontWeight: 500, cursor: 'pointer',
+            transition: 'all 0.25s ease', fontFamily: 'inherit',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#fef2f2';
-            e.currentTarget.style.borderColor = '#fca5a5';
+            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+            e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            e.currentTarget.style.color = '#f87171';
+            e.currentTarget.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.1)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.borderColor = '#fee2e2';
+            e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+            e.currentTarget.style.color = 'rgba(239, 68, 68, 0.7)';
+            e.currentTarget.style.boxShadow = 'none';
           }}
         >
-          <LogOut size={15} />
+          <LogOut size={14} />
           <span>退出登录</span>
         </button>
       </div>
