@@ -11,6 +11,7 @@ const AuthPage = () => {
     confirmPassword: '',
   });
   const [formError, setFormError] = useState('');
+  const [formSuccess, setFormSuccess] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const { login, register } = useContext(AuthContext);
@@ -18,6 +19,7 @@ const AuthPage = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setFormError('');
+    setFormSuccess('');
   };
 
   const handleSubmit = async (e) => {
@@ -35,6 +37,9 @@ const AuthPage = () => {
       const result = await login(formData.email, formData.password);
       if (!result.success) {
         setFormError(result.message);
+        setSubmitting(false);
+      } else {
+        setFormSuccess('登录成功，正在跳转...');
       }
     } else {
       // 注册
@@ -56,9 +61,11 @@ const AuthPage = () => {
       const result = await register(formData.username, formData.email, formData.password);
       if (!result.success) {
         setFormError(result.message);
+        setSubmitting(false);
+      } else {
+        setFormSuccess('注册成功，正在为您登录...');
       }
     }
-    setSubmitting(false);
   };
 
   const switchMode = () => {
@@ -113,6 +120,13 @@ const AuthPage = () => {
               <div style={styles.errorBox}>
                 <span style={styles.errorIcon}>⚠</span>
                 <span>{formError}</span>
+              </div>
+            )}
+
+            {formSuccess && (
+              <div style={styles.successBox}>
+                <span style={styles.successIcon}>✓</span>
+                <span>{formSuccess}</span>
               </div>
             )}
 
@@ -387,6 +401,22 @@ const styles = {
   },
   errorIcon: {
     fontSize: '1rem',
+  },
+  successBox: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    padding: '0.75rem 1rem',
+    background: '#f0fdf4',
+    border: '1px solid #bbf7d0',
+    borderRadius: '0.75rem',
+    color: '#16a34a',
+    fontSize: '0.85rem',
+    marginBottom: '1.25rem',
+  },
+  successIcon: {
+    fontSize: '1rem',
+    fontWeight: 'bold',
   },
   form: {
     display: 'flex',
