@@ -62,7 +62,7 @@ const Dashboard = () => {
 
   const quickLinks = [
     { name: '作品管理', desc: '上传与管理所有作品', path: '/library', icon: <Library size={24} />, color: 'var(--primary-color)' },
-    { name: 'AI优化', desc: '一键生成面试话术', path: '/ai', icon: <Wand2 size={24} />, color: '#af52de' },
+    { name: '话术生成', desc: '智能提取面试话术', path: '/ai', icon: <Wand2 size={24} />, color: '#af52de' },
     { name: '岗位匹配', desc: '寻找最适合的工作', path: '/jobs', icon: <Briefcase size={24} />, color: 'var(--accent-color)' },
     { name: '我的作品集', desc: '精选展示给面试官', path: '/portfolio', icon: <FolderKanban size={24} />, color: 'var(--accent-warm)' },
   ];

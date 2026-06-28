@@ -63,9 +63,9 @@ const WorkLibrary = () => {
       source: '上传文件提取', 
       date: new Date().toISOString().split('T')[0], 
       role: '主创',
-      background: '等待 AI 自动从文件中提取...',
-      idea: '等待 AI 自动从文件中提取...',
-      process: '等待 AI 自动从文件中提取...',
+      background: '待智能提取...',
+      idea: '待智能提取...',
+      process: '待智能提取...',
     };
     
     const res = await addWork(workToSave);
@@ -130,7 +130,7 @@ const WorkLibrary = () => {
       >
         <input 
           type="file" 
-          className="hidden" 
+          style={{ display: 'none' }}
           ref={fileInputRef} 
           onChange={handleFileChange}
         />
@@ -292,7 +292,7 @@ const WorkLibrary = () => {
 
               <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.05)', marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
                 <Link to={`/ai?workId=${work.id}`} style={{ flex: 1, padding: '0.5rem', textAlign: 'center', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 500, background: 'rgba(0,0,0,0.04)', color: 'var(--text-main)', textDecoration: 'none' }}>
-                  <Sparkles size={12} style={{ display: 'inline', marginRight: '4px', color: 'var(--primary-color)' }} /> AI 提炼话术
+                  智能提炼话术
                 </Link>
                 <Link to={`/details/${work.id}`} style={{ flex: 1, padding: '0.5rem', textAlign: 'center', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 500, background: 'var(--primary-color)', color: 'white', textDecoration: 'none' }}>
                   查看详情

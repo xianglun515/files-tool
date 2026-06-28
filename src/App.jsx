@@ -67,7 +67,7 @@ const Sidebar = () => {
   const navItems = [
     { path: '/', label: '首页总览', icon: <LayoutDashboard size={19} /> },
     { path: '/library', label: '作品库', icon: <Library size={19} /> },
-    { path: '/ai', label: 'AI优化', icon: <Wand2 size={19} /> },
+    { path: '/ai', label: '智能提取', icon: <Wand2 size={19} /> },
     { path: '/portfolio', label: '我的作品集', icon: <FolderKanban size={19} /> },
   ];
 
