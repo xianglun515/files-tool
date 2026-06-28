@@ -77,12 +77,30 @@ router.post('/optimize', async (req, res) => {
     }
 
     // 3. 调用 AI 大模型
+    let apiMessages = [];
+    
+    // 大多数视觉模型（如 qwen-vl-plus, glm-4v）在多模态下不支持单独的 system role，
+    // 因此如果包含图片，我们将 systemPrompt 合并到 userPrompt 的开头。
+    if (coverImage) {
+      apiMessages = [
+        { 
+          role: 'user', 
+          content: [
+            { type: "text", text: `[系统指令开始]\n${systemPrompt}\n[系统指令结束]\n\n${userPrompt}` },
+            { type: "image_url", image_url: { url: coverImage } }
+          ]
+        }
+      ];
+    } else {
+      apiMessages = [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ];
+    }
+
     const apiOptions = {
       model: process.env.AI_MODEL || 'deepseek-chat',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMessageContent }
-      ],
+      messages: apiMessages,
       temperature: 0.4
     };
 
