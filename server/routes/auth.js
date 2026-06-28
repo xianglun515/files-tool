@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import authMiddleware from '../middleware/auth.js';
+import { sendEmail } from '../utils/email.js';
 
 const router = express.Router();
 
@@ -36,6 +37,29 @@ router.post('/register', async (req, res) => {
 
     // 创建新用户
     const user = await User.create({ username, email, password });
+
+    // 异步发送欢迎邮件（不阻塞主流程）
+    sendEmail({
+      to: email,
+      subject: '欢迎加入！让你的作品会说话',
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+          <h2 style="color: #007AFF;">Hi ${username},</h2>
+          <p>欢迎来到<strong>传媒生作品集助手</strong>！你的账号已经成功创建。</p>
+          <p>在这里，你可以：</p>
+          <ul>
+            <li>将零散的项目素材集中管理</li>
+            <li>使用 AI 智能润色项目描述</li>
+            <li>一键提炼面试讲述话术</li>
+          </ul>
+          <p>快去<a href="https://xianglun515.github.io/files-tool" style="color: #007AFF;">添加你的第一个作品</a>吧！</p>
+          <p style="margin-top: 30px; font-size: 0.9em; color: #888;">
+            此致,<br/>
+            传媒生作品集助手 团队
+          </p>
+        </div>
+      `
+    }).catch(e => console.error("欢迎邮件发送异常", e));
 
     // 返回 token 和用户信息
     const token = generateToken(user._id);
