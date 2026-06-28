@@ -91,10 +91,7 @@ const AuthPage = () => {
 
   return (
     <div style={styles.pageWrapper}>
-      {/* 装饰性背景 */}
-      <div style={styles.bgOrb1} />
-      <div style={styles.bgOrb2} />
-      <div style={styles.bgOrb3} />
+      {/* 纯粹留白，无装饰背景 */}
 
       <div style={styles.container}>
         {/* 左侧品牌区 */}
@@ -256,56 +253,26 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'linear-gradient(135deg, #f0f4ff 0%, #faf5ff 50%, #fff1f2 100%)',
+    background: '#f8f9fa',
     position: 'relative',
     overflow: 'hidden',
     padding: '1rem',
   },
-  bgOrb1: {
-    position: 'absolute',
-    width: '600px',
-    height: '600px',
-    borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)',
-    top: '-200px',
-    left: '-150px',
-    animation: 'float 8s ease-in-out infinite',
-  },
-  bgOrb2: {
-    position: 'absolute',
-    width: '500px',
-    height: '500px',
-    borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)',
-    bottom: '-150px',
-    right: '-100px',
-    animation: 'float 10s ease-in-out infinite reverse',
-  },
-  bgOrb3: {
-    position: 'absolute',
-    width: '300px',
-    height: '300px',
-    borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(236,72,153,0.08) 0%, transparent 70%)',
-    top: '50%',
-    left: '60%',
-    animation: 'float 12s ease-in-out infinite',
-  },
+
   container: {
     display: 'flex',
     width: '100%',
     maxWidth: '1000px',
     minHeight: '600px',
-    borderRadius: '1.5rem',
+    borderRadius: '16px',
     overflow: 'hidden',
-    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.5)',
+    boxShadow: '0 10px 40px -10px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)',
     position: 'relative',
     zIndex: 1,
   },
-  // ---- 左侧品牌 ----
   brandSide: {
     flex: '1 1 45%',
-    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)',
+    background: '#111111',
     padding: '3rem',
     display: 'flex',
     alignItems: 'center',
@@ -477,15 +444,15 @@ const styles = {
     justifyContent: 'center',
     gap: '0.5rem',
     padding: '0.85rem 1.5rem',
-    background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+    background: '#111111',
     color: 'white',
     border: 'none',
     borderRadius: '0.75rem',
     fontSize: '1rem',
     fontWeight: 600,
     fontFamily: 'inherit',
-    boxShadow: '0 4px 15px rgba(99,102,241,0.35)',
-    transition: 'all 0.3s ease',
+    boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
+    transition: 'all 0.2s ease',
     marginTop: '0.5rem',
   },
   loadingDots: {
@@ -506,7 +473,7 @@ const styles = {
   },
   switchBtn: {
     fontSize: '0.85rem',
-    color: '#6366f1',
+    color: '#111111',
     fontWeight: 600,
     background: 'none',
     border: 'none',
