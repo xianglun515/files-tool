@@ -77,41 +77,80 @@ router.post('/optimize', async (req, res) => {
     }
 
     // 3. 调用 AI 大模型
-    let apiMessages = [];
-    
-    // 大多数视觉模型（如 qwen-vl-plus, glm-4v）在多模态下不支持单独的 system role，
-    // 因此如果包含图片，我们将 systemPrompt 合并到 userPrompt 的开头。
-    if (coverImage) {
-      apiMessages = [
-        { 
-          role: 'user', 
-          content: [
-            { type: "text", text: `[系统指令开始]\n${systemPrompt}\n[系统指令结束]\n\n${userPrompt}` },
-            { type: "image_url", image_url: { url: coverImage } }
-          ]
-        }
-      ];
+    let resultText = "";
+
+    // 针对阿里云百炼 (DashScope) 的特殊兼容：
+    // DashScope 的 OpenAI 兼容接口不支持 base64 图片，必须走其原生的 multimodal-generation 接口
+    const baseURL = process.env.AI_BASE_URL || '';
+    if (coverImage && baseURL.includes('dashscope')) {
+      const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.AI_API_KEY}`,
+          'Content-Type': 'application/json',
+          'X-DashScope-DataInspection': 'enable'
+        },
+        body: JSON.stringify({
+          model: process.env.AI_MODEL || 'qwen-vl-plus',
+          input: {
+            messages: [
+              {
+                role: "user",
+                content: [
+                  { image: coverImage },
+                  { text: `[系统指令开始]\n${systemPrompt}\n[系统指令结束]\n\n${userPrompt}` }
+                ]
+              }
+            ]
+          },
+          parameters: {}
+        })
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(`千问接口报错: ${errData.message || JSON.stringify(errData)}`);
+      }
+
+      const data = await response.json();
+      resultText = data.output?.choices?.[0]?.message?.content?.[0]?.text || "";
+      if (!resultText) {
+        throw new Error('千问返回的内容格式不符合预期: ' + JSON.stringify(data));
+      }
+
     } else {
-      apiMessages = [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ];
+      // 标准的 OpenAI SDK 调用（用于支持 base64 的平台如 OpenAI, Zhipu, Kimi 等）
+      let apiMessages = [];
+      if (coverImage) {
+        apiMessages = [
+          { 
+            role: 'user', 
+            content: [
+              { type: "text", text: `[系统指令开始]\n${systemPrompt}\n[系统指令结束]\n\n${userPrompt}` },
+              { type: "image_url", image_url: { url: coverImage } }
+            ]
+          }
+        ];
+      } else {
+        apiMessages = [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ];
+      }
+
+      const apiOptions = {
+        model: process.env.AI_MODEL || 'deepseek-chat',
+        messages: apiMessages,
+        temperature: 0.4
+      };
+
+      if (!coverImage) {
+        apiOptions.response_format = { type: "json_object" };
+      }
+
+      const response = await openai.chat.completions.create(apiOptions);
+      resultText = response.choices[0].message.content.trim();
     }
-
-    const apiOptions = {
-      model: process.env.AI_MODEL || 'deepseek-chat',
-      messages: apiMessages,
-      temperature: 0.4
-    };
-
-    // 仅在纯文本模式下强行指定 JSON (部分视觉模型不支持该参数)
-    if (!coverImage) {
-      apiOptions.response_format = { type: "json_object" };
-    }
-
-    const response = await openai.chat.completions.create(apiOptions);
-
-    let resultText = response.choices[0].message.content.trim();
     
     // 简单的清理逻辑，防止 AI 强行带上 ```json
     if (resultText.startsWith('```json')) {
@@ -143,7 +182,9 @@ router.post('/optimize', async (req, res) => {
     res.json(jsonResult);
   } catch (err) {
     console.error('AI 优化失败:', err);
-    res.status(500).json({ message: 'AI 优化生成失败，请检查 API 配置或稍后再试。' });
+    // 提取 OpenAI 格式或原生 Fetch 格式的报错信息并传给前端
+    const errMsg = err.response?.data?.error?.message || err.message || '未知错误';
+    res.status(500).json({ message: 'AI 生成失败: ' + errMsg });
   }
 });
 
