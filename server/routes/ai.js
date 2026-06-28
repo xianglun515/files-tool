@@ -32,8 +32,9 @@ router.post('/optimize', async (req, res) => {
 核心原则：
 1. 绝对忠于原文：只润色用户已提供的信息，禁止凭空编造任何项目细节、数据、成果或经历。
 2. 如果某个字段用户没有提供具体内容（如写了"未提供"或为空），在该字段中如实写"暂无"，不要自行发挥。
-3. 润色应限于：让表述更专业精练、补充合理的连接词、调整为更适合求职场景的书面语气。
-4. tags 和 jobs 字段需要根据用户已提供的所有内容合理提炼，但不能超出原文所涉范围。
+3. 如果所有素材都是"未提供"，你必须依然返回指定的 JSON 结构（内容全部填"暂无"或"缺乏素材"），绝不能返回普通文本。
+4. 润色应限于：让表述更专业精练、补充合理的连接词、调整为更适合求职场景的书面语气。
+5. tags 和 jobs 字段需要根据用户已提供的所有内容合理提炼，但不能超出原文所涉范围。
 
 请严格返回一个标准的 JSON 格式对象，不要包含任何额外的 Markdown 标记（例如 \`\`\`json ），必须包含以下字段：
 {
@@ -82,7 +83,27 @@ router.post('/optimize', async (req, res) => {
       resultText = resultText.replace(/^```json\n?/, '').replace(/\n?```$/, '');
     }
 
-    const jsonResult = JSON.parse(resultText);
+    let jsonResult;
+    try {
+      jsonResult = JSON.parse(resultText);
+    } catch (parseErr) {
+      console.warn('AI 返回的格式非标准 JSON，已启用降级处理:', resultText);
+      // 如果 AI 返回非 JSON（通常是因为用户提供的信息为空，AI 拒绝执行而返回纯文本道歉）
+      jsonResult = {
+        background: '暂无',
+        role: '暂无',
+        idea: '暂无',
+        process: '暂无',
+        highlights: '暂无',
+        tags: [],
+        jobs: [],
+        matchReasons: '由于提供的素材过少，暂时无法分析匹配岗位。',
+        projectDescription: resultText.includes('未提供') ? 
+          'AI 检测到您的作品缺乏具体文字素材，暂无法进行有效润色。建议您先在作品中补充一些“项目背景”或“执行过程”，再让 AI 帮您提炼。' : 
+          'AI 提炼失败，请尝试补充更多项目细节。',
+        interviewScript: '同上，建议补充素材后再试。'
+      };
+    }
 
     res.json(jsonResult);
   } catch (err) {
