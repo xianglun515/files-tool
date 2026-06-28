@@ -1,15 +1,17 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   PlusCircle, 
   Library, 
-  Briefcase, 
   Wand2, 
-  FolderKanban
+  FolderKanban,
+  LogOut
 } from 'lucide-react';
 
-// Placeholder imports for pages
+import { AuthContext } from './context/AuthContext';
+
+// Page imports
 import Dashboard from './pages/Dashboard';
 import AddWork from './pages/AddWork';
 import WorkLibrary from './pages/WorkLibrary';
@@ -18,13 +20,46 @@ import JobMatching from './pages/JobMatching';
 import AIOptimization from './pages/AIOptimization';
 import MyPortfolio from './pages/MyPortfolio';
 import PortfolioPreview from './pages/PortfolioPreview';
+import AuthPage from './pages/AuthPage';
+
+// 路由守卫组件：未登录时重定向到登录页
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useContext(AuthContext);
+  
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        height: '100vh', fontSize: '1.1rem', color: '#64748b',
+        background: 'linear-gradient(135deg, #f0f4ff 0%, #faf5ff 50%, #fff1f2 100%)',
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '40px', height: '40px', border: '3px solid #e2e8f0',
+            borderTopColor: '#6366f1', borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite',
+            margin: '0 auto 1rem',
+          }} />
+          <span>加载中...</span>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+};
 
 const Sidebar = () => {
   const location = useLocation();
   const path = location.pathname;
+  const { user, logout } = useContext(AuthContext);
 
-  // 如果是在预览页，不显示侧边栏
-  if (path === '/preview') return null;
+  // 如果是在预览页或登录页，不显示侧边栏
+  if (path === '/preview' || path === '/login') return null;
 
   const navItems = [
     { path: '/', label: '首页总览', icon: <LayoutDashboard size={20} /> },
@@ -80,20 +115,46 @@ const Sidebar = () => {
     </nav>
       
       <div className="mt-auto pt-6 border-t border-gray-200">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
           <div style={{
-            width: '32px', height: '32px', borderRadius: '50%',
+            width: '36px', height: '36px', borderRadius: '50%',
             background: 'linear-gradient(135deg, var(--primary-color), var(--secondary-color))',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             color: 'white', fontWeight: 'bold', fontSize: '14px', flexShrink: 0
           }}>
-            U
+            {user?.username?.charAt(0)?.toUpperCase() || 'U'}
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: '14px', fontWeight: 500, lineHeight: 1.2 }}>当前用户</span>
-            <span className="text-muted" style={{ fontSize: '12px', lineHeight: 1.2 }}>学生版</span>
+          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
+            <span style={{ fontSize: '14px', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {user?.username || '用户'}
+            </span>
+            <span className="text-muted" style={{ fontSize: '12px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {user?.email || ''}
+            </span>
           </div>
         </div>
+        <button
+          onClick={logout}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '0.5rem',
+            width: '100%', padding: '0.6rem 1rem',
+            background: 'transparent', border: '1px solid #fee2e2',
+            borderRadius: '0.625rem', color: '#ef4444',
+            fontSize: '0.8rem', fontWeight: 500, cursor: 'pointer',
+            transition: 'all 0.2s ease', fontFamily: 'inherit',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#fef2f2';
+            e.currentTarget.style.borderColor = '#fca5a5';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.borderColor = '#fee2e2';
+          }}
+        >
+          <LogOut size={15} />
+          <span>退出登录</span>
+        </button>
       </div>
     </div>
   );
@@ -110,19 +171,21 @@ function App() {
 const AppContent = () => {
   const location = useLocation();
   const isPreview = location.pathname === '/preview';
+  const isLogin = location.pathname === '/login';
 
   return (
-    <div className={isPreview ? '' : 'app-container'}>
+    <div className={isPreview || isLogin ? '' : 'app-container'}>
       <Sidebar />
-      <main className={isPreview ? '' : 'main-content'}>
+      <main className={isPreview || isLogin ? '' : 'main-content'}>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/add" element={<AddWork />} />
-          <Route path="/library" element={<WorkLibrary />} />
-          <Route path="/details/:id" element={<WorkDetails />} />
-          <Route path="/ai" element={<AIOptimization />} />
-          <Route path="/portfolio" element={<MyPortfolio />} />
-          <Route path="/preview" element={<PortfolioPreview />} />
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/add" element={<ProtectedRoute><AddWork /></ProtectedRoute>} />
+          <Route path="/library" element={<ProtectedRoute><WorkLibrary /></ProtectedRoute>} />
+          <Route path="/details/:id" element={<ProtectedRoute><WorkDetails /></ProtectedRoute>} />
+          <Route path="/ai" element={<ProtectedRoute><AIOptimization /></ProtectedRoute>} />
+          <Route path="/portfolio" element={<ProtectedRoute><MyPortfolio /></ProtectedRoute>} />
+          <Route path="/preview" element={<ProtectedRoute><PortfolioPreview /></ProtectedRoute>} />
         </Routes>
       </main>
     </div>
