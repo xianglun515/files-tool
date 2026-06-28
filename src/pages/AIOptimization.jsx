@@ -41,7 +41,14 @@ const AIOptimization = () => {
         body: JSON.stringify({
           title: selectedWork.title,
           type: selectedWork.type,
-          materials: selectedWork.materials
+          materials: selectedWork.materials,
+          role: selectedWork.role,
+          tools: selectedWork.tools,
+          background: selectedWork.background,
+          idea: selectedWork.idea,
+          process: selectedWork.process,
+          highlights: selectedWork.highlights,
+          dataFeedback: selectedWork.dataFeedback
         })
       });
 

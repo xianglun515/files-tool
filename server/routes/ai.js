@@ -15,7 +15,7 @@ const openai = new OpenAI({
 router.use(authMiddleware);
 
 router.post('/optimize', async (req, res) => {
-  const { title, type, materials } = req.body;
+  const { title, type, materials, role, tools, background, idea, process, highlights, dataFeedback } = req.body;
 
   if (!title) {
     return res.status(400).json({ message: '缺少作品名称' });
@@ -27,25 +27,42 @@ router.post('/optimize', async (req, res) => {
     }
 
     // 2. 编写系统提示词 (Prompt Engineering)
-    const systemPrompt = `你现在是一位资深的资深大厂 HR 兼传媒类作品集辅导专家。
-你的任务是根据用户提供的简短【作品名称】和【作品类型】，发挥合理的专业想象，自动为其生成一份极其惊艳、符合 STAR 法则（情境、任务、行动、结果）的详细项目履历。
-因为用户采用了“极简拖拽上传”，他们没有填写具体内容，你要基于作品名自动生成最符合常理的高光内容。
+    const systemPrompt = `你是一位严谨的求职文案编辑。你的任务是基于用户提供的【已有素材】进行润色和结构化整理。
+
+核心原则：
+1. 绝对忠于原文：只润色用户已提供的信息，禁止凭空编造任何项目细节、数据、成果或经历。
+2. 如果某个字段用户没有提供具体内容（如写了"未提供"或为空），在该字段中如实写"暂无"，不要自行发挥。
+3. 润色应限于：让表述更专业精练、补充合理的连接词、调整为更适合求职场景的书面语气。
+4. tags 和 jobs 字段需要根据用户已提供的所有内容合理提炼，但不能超出原文所涉范围。
 
 请严格返回一个标准的 JSON 格式对象，不要包含任何额外的 Markdown 标记（例如 \`\`\`json ），必须包含以下字段：
 {
-  "background": "项目背景与目标（约50字）",
-  "role": "你在项目中担任的角色（如：主策划、导演、核心开发）",
-  "idea": "核心创意与构思（约50字）",
-  "process": "详细的执行过程（约100字）",
-  "highlights": "项目的高光时刻与数据表现（约50字）",
-  "tags": ["能力标签1", "能力标签2", "能力标签3", "能力标签4"],
-  "jobs": ["匹配岗位1", "匹配岗位2"],
-  "matchReasons": "为什么匹配这些岗位的分析（约50字）",
-  "projectDescription": "一段适合写在简历上的STAR法则项目描述（约150字）",
-  "interviewScript": "一段如果面试官问起这个项目，你应该怎么流利对答的话术（口语化，约150字）"
+  "background": "基于用户原文润色的项目背景（若原文为空则填'暂无'）",
+  "role": "用户填写的角色（若原文为空则填'暂无'）",
+  "idea": "基于原文润色的核心创意（若原文为空则填'暂无'）",
+  "process": "基于原文润色的执行过程（若原文为空则填'暂无'）",
+  "highlights": "基于原文润色的成果亮点（若原文为空则填'暂无'）",
+  "tags": ["从原文中提炼的能力标签，最多4个"],
+  "jobs": ["从原文推断的匹配岗位，最多2个"],
+  "matchReasons": "基于原文内容分析为什么匹配这些岗位",
+  "projectDescription": "将用户已有的背景、过程、亮点等信息整合为一段STAR法则项目描述，不编造任何新内容",
+  "interviewScript": "将项目描述改写为口语化的面试讲述版本，保持内容与项目描述一致"
 }`;
 
-    const userPrompt = `作品名称：${title}\n作品类型：${type}\n上传的源文件：${materials || '未提供文件名称'}\n\n请为我自动生成并优化这个作品的信息，返回纯 JSON 格式。`;
+    const userPrompt = `以下是用户提供的作品原始素材，请基于这些内容进行润色整理：
+
+作品名称：${title}
+作品类型：${type}
+上传的源文件：${materials || '未提供'}
+个人角色：${role || '未提供'}
+使用工具：${tools || '未提供'}
+项目背景：${background || '未提供'}
+核心创意：${idea || '未提供'}
+执行过程：${process || '未提供'}
+成果亮点：${highlights || '未提供'}
+数据反馈：${dataFeedback || '未提供'}
+
+请严格基于以上已有素材进行润色，返回纯 JSON 格式。禁止编造原文中没有的信息。`;
 
     // 3. 调用 AI 大模型
     const response = await openai.chat.completions.create({
@@ -54,7 +71,7 @@ router.post('/optimize', async (req, res) => {
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      temperature: 0.7,
+      temperature: 0.4,
       response_format: { type: "json_object" } // 强制返回 JSON (某些模型可能不支持，这里先保守使用普通模式配合提示词)
     });
 
