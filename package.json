@@ -5,6 +5,7 @@
   "type": "module",
   "homepage": "https://xianglun515.github.io/files-tool/",
   "scripts": {
+    "start": "node server/index.js",
     "dev": "vite",
     "server": "node server/index.js",
     "dev:full": "concurrently \"npm run server\" \"npm run dev\"",
