@@ -201,17 +201,7 @@ const AIOptimization = () => {
                 </div>
               ) : (
                 <div className="relative h-full">
-                  <div className="absolute top-0 right-0">
-                    <button 
-                      className="btn btn-secondary btn-sm bg-white shadow-sm flex items-center gap-1"
-                      onClick={() => handleCopy(activeTab === 'description' ? selectedWork.projectDescription : selectedWork.interviewScript, activeTab)}
-                      disabled={!(activeTab === 'description' ? selectedWork.projectDescription : selectedWork.interviewScript)}
-                    >
-                      {copied === activeTab ? <><Check size={14} className="text-green-500"/> 已复制</> : <><Copy size={14} /> 复制全文</>}
-                    </button>
-                  </div>
-                  
-                  <div className="prose prose-sm max-w-none pt-2 pr-2">
+                  <div className="prose prose-sm max-w-none pt-2 pr-2 pb-4">
                     {activeTab === 'description' ? (
                       selectedWork.projectDescription ? (
                         <div dangerouslySetInnerHTML={{ __html: selectedWork.projectDescription.replace(/\n/g, '<br/>').replace(/### /g, '<strong>').replace(/<br\/><strong>/g, '<br/><br/><strong>').replace(/<strong>(.*?)<br\/>/g, '<strong>$1</strong><br/>') }} />
@@ -226,6 +216,18 @@ const AIOptimization = () => {
                       )
                     )}
                   </div>
+                  
+                  {(selectedWork.projectDescription || selectedWork.interviewScript) && (
+                    <div className="flex justify-end mt-4 mb-2 pr-2">
+                      <button 
+                        className="btn btn-secondary btn-sm bg-white shadow-sm flex items-center gap-1"
+                        onClick={() => handleCopy(activeTab === 'description' ? selectedWork.projectDescription : selectedWork.interviewScript, activeTab)}
+                        disabled={!(activeTab === 'description' ? selectedWork.projectDescription : selectedWork.interviewScript)}
+                      >
+                        {copied === activeTab ? <><Check size={14} className="text-green-500"/> 已复制</> : <><Copy size={14} /> 复制全文</>}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
