@@ -30,20 +30,19 @@ const ProtectedRoute = ({ children }) => {
     return (
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        height: '100vh', fontSize: '1.1rem', color: '#94a3b8',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)',
+        height: '100vh', fontSize: '1.1rem', color: 'var(--text-muted)',
+        background: 'var(--bg-color, #f5f5f7)',
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
-            width: '48px', height: '48px',
-            border: '3px solid rgba(99, 102, 241, 0.2)',
-            borderTopColor: '#6366f1',
+            width: '36px', height: '36px',
+            border: '3px solid rgba(0, 0, 0, 0.08)',
+            borderTopColor: 'var(--primary-color, #007AFF)',
             borderRadius: '50%',
             animation: 'spin 0.8s linear infinite',
             margin: '0 auto 1.5rem',
-            boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)',
           }} />
-          <span style={{ letterSpacing: '0.1em', fontWeight: 500 }}>加载中...</span>
+          <span style={{ letterSpacing: '0.05em', fontWeight: 500, fontSize: '0.9rem' }}>加载中...</span>
         </div>
       </div>
     );
