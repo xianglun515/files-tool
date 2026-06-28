@@ -5,9 +5,17 @@ export const PortfolioContext = createContext();
 
 export const PortfolioProvider = ({ children }) => {
   const [works, setWorks] = useState(() => {
-    const saved = localStorage.getItem('portfolio_works');
-    if (saved) {
-      return JSON.parse(saved);
+    try {
+      const saved = localStorage.getItem('portfolio_works');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // 确保解析出来的是数组，否则使用初始数据
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to parse portfolio_works from localStorage:', e);
     }
     return initialMockData;
   });
