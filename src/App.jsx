@@ -21,8 +21,9 @@ import AIOptimization from './pages/AIOptimization';
 import MyPortfolio from './pages/MyPortfolio';
 import PortfolioPreview from './pages/PortfolioPreview';
 import AuthPage from './pages/AuthPage';
+import LandingPage from './pages/LandingPage';
 
-// 路由守卫组件：未登录时重定向到登录页
+// 路由守卫组件：未登录时重定向到欢迎封面页
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
   
@@ -49,7 +50,7 @@ const ProtectedRoute = ({ children }) => {
   }
   
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/welcome" replace />;
   }
   
   return children;
@@ -60,8 +61,8 @@ const Sidebar = () => {
   const path = location.pathname;
   const { user, logout } = useContext(AuthContext);
 
-  // 如果是在预览页或登录页，不显示侧边栏
-  if (path === '/preview' || path === '/login') return null;
+  // 如果是在预览页、登录页或欢迎封面页，不显示侧边栏
+  if (path === '/preview' || path === '/login' || path === '/welcome') return null;
 
   const navItems = [
     { path: '/', label: '首页总览', icon: <LayoutDashboard size={19} /> },
@@ -209,12 +210,14 @@ const AppContent = () => {
   const location = useLocation();
   const isPreview = location.pathname === '/preview';
   const isLogin = location.pathname === '/login';
+  const isWelcome = location.pathname === '/welcome';
 
   return (
-    <div className={isPreview || isLogin ? '' : 'app-container'}>
+    <div className={isPreview || isLogin || isWelcome ? '' : 'app-container'}>
       <Sidebar />
-      <main className={isPreview || isLogin ? '' : 'main-content'}>
+      <main className={isPreview || isLogin || isWelcome ? '' : 'main-content'}>
         <Routes>
+          <Route path="/welcome" element={<LandingPage />} />
           <Route path="/login" element={<AuthPage />} />
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/library" element={<ProtectedRoute><WorkLibrary /></ProtectedRoute>} />
