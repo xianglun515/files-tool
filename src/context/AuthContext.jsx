@@ -58,12 +58,7 @@ export const AuthProvider = ({ children }) => {
         method: 'POST',
         body: JSON.stringify({ username, email, password }),
       });
-      // 延迟 1.5 秒更新状态，给前端留出展示“成功”提示的时间
-      setTimeout(() => {
-        localStorage.setItem('auth_token', data.token);
-        setToken(data.token);
-        setUser(data.user);
-      }, 1500);
+      // 不再自动登录，直接返回成功
       return { success: true };
     } catch (err) {
       setError(err.message);

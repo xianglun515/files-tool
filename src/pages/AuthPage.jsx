@@ -63,7 +63,13 @@ const AuthPage = () => {
         setFormError(result.message);
         setSubmitting(false);
       } else {
-        setFormSuccess('注册成功，正在为您登录...');
+        setFormSuccess('注册成功，正在跳转到登录界面...');
+        setTimeout(() => {
+          setIsLogin(true);
+          setFormSuccess('');
+          setFormData(prev => ({ ...prev, password: '', confirmPassword: '' })); // 保留邮箱，清空密码
+          setSubmitting(false);
+        }, 1500);
       }
     }
   };
