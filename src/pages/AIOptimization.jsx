@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PortfolioContext } from '../context/PortfolioContext';
 import { AuthContext } from '../context/AuthContext';
+import { supabase } from '../config/supabase';
 import { simulateAIGeneration } from '../utils/aiSimulator';
 import { Wand2, Copy, Check, Info, FileText, MessageSquare, Lightbulb } from 'lucide-react';
 
@@ -31,14 +32,8 @@ const AIOptimization = () => {
     setGenerating(true);
     
     try {
-      const API_BASE = import.meta.env.VITE_API_URL || '/api';
-      const response = await fetch(`${API_BASE}/ai/optimize`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
+      const { data: result, error } = await supabase.functions.invoke('ai-optimize', {
+        body: {
           title: selectedWork.title,
           type: selectedWork.type,
           materials: selectedWork.materials,
@@ -50,16 +45,16 @@ const AIOptimization = () => {
           highlights: selectedWork.highlights,
           dataFeedback: selectedWork.dataFeedback,
           coverImage: selectedWork.coverImage
-        })
+        }
       });
 
-      if (!response.ok) {
-        let errData;
-        try { errData = await response.json(); } catch(e) {}
-        throw new Error(errData?.message || 'AI 生成失败');
+      if (error) {
+        throw new Error(error.message || 'AI 边缘函数调用失败');
       }
-      
-      const result = await response.json();
+
+      if (result?.message) {
+        throw new Error(result.message);
+      }
       
       // 更新作品数据，保存生成的文本
       updateWork(selectedWork.id, {
