@@ -161,11 +161,11 @@ const Sidebar = () => {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             color: 'white', fontWeight: 'bold', fontSize: '12px', flexShrink: 0,
           }}>
-            {user?.username?.charAt(0)?.toUpperCase() || 'U'}
+            {user?.user_metadata?.username?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
             <span style={{ fontSize: '13px', fontWeight: 600, lineHeight: 1.3, color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {user?.username || '用户'}
+              {user?.user_metadata?.username || '用户'}
             </span>
             <span style={{ fontSize: '11px', lineHeight: 1.3, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user?.email || ''}
