@@ -70,8 +70,8 @@ const AIOptimization = () => {
 
       const result = await response.json();
       
-      // 更新作品数据，保存生成的文本
-      updateWork(selectedWork.id, {
+      // 更新作品数据到数据库（不含 suggestions，因为它不是数据库字段）
+      const updateResult = await updateWork(selectedWork.id, {
         projectDescription: result.projectDescription,
         interviewScript: result.interviewScript,
         background: result.background,
@@ -82,9 +82,12 @@ const AIOptimization = () => {
         tags: result.tags,
         jobs: result.jobs,
         matchReasons: result.matchReasons,
-        optimized: true,
-        suggestions: ["你的作品已经被 AI 全面提取和优化，可以直接在简历和面试中使用了！"]
+        optimized: true
       });
+
+      if (!updateResult?.success) {
+        throw new Error(updateResult?.message || '保存 AI 结果到数据库失败');
+      }
     } catch (error) {
       console.error('AI Generation Error:', error);
       alert(`AI 优化失败：\n${error.message}`);
