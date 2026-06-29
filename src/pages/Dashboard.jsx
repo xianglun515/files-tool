@@ -89,7 +89,7 @@ const Dashboard = () => {
           </span>
         </div>
         <h1 style={{ fontSize: '2.4rem', fontWeight: 600, marginBottom: '1rem', letterSpacing: '-0.03em', color: '#111' }}>
-          {getGreeting()}, {user?.username || 'User'}.
+          {getGreeting()}, {user?.user_metadata?.username || user?.email?.split('@')[0] || 'User'}.
         </h1>
         <p style={{ fontSize: '1.05rem', color: '#666', maxWidth: '540px', lineHeight: 1.6, fontWeight: 400 }}>
           这里是您的能力大本营。以极简的结构，将零散的作品转化为专业、可展示的求职作品集。
