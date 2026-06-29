@@ -36,7 +36,7 @@ const AIOptimization = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}` // Direct read for simplicity
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           title: selectedWork.title,

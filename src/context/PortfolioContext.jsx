@@ -1,35 +1,13 @@
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { AuthContext } from './AuthContext';
+import { supabase } from '../config/supabase';
 
 export const PortfolioContext = createContext();
-
-const API_BASE = import.meta.env.VITE_API_URL 
-  ? `${import.meta.env.VITE_API_URL}/works`
-  : '/api/works';
 
 export const PortfolioProvider = ({ children }) => {
   const [works, setWorks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { token, user } = useContext(AuthContext);
-
-  // 通用请求函数，携带 Token
-  const apiFetch = useCallback(async (url, options = {}) => {
-    if (!token) throw new Error('未登录');
-    
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      ...options.headers,
-    };
-
-    const response = await fetch(url, { ...options, headers });
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || '请求失败');
-    }
-    return data;
-  }, [token]);
+  const { user } = useContext(AuthContext);
 
   // 加载作品列表
   const fetchWorks = useCallback(async () => {
@@ -41,30 +19,36 @@ export const PortfolioProvider = ({ children }) => {
     
     try {
       setLoading(true);
-      const data = await apiFetch(API_BASE);
-      // 将 _id 映射为 id 以兼容现有前端代码
-      const mappedData = data.map(w => ({ ...w, id: w._id }));
-      setWorks(mappedData);
+      const { data, error } = await supabase
+        .from('works')
+        .select('*')
+        .order('createdAt', { ascending: false });
+        
+      if (error) throw error;
+      setWorks(data || []);
     } catch (error) {
       console.error('获取作品失败:', error);
     } finally {
       setLoading(false);
     }
-  }, [apiFetch, user]);
+  }, [user]);
 
   useEffect(() => {
     fetchWorks();
   }, [fetchWorks]);
 
   const addWork = async (work) => {
+    if (!user) return { success: false, message: "未登录" };
     try {
-      const data = await apiFetch(API_BASE, {
-        method: 'POST',
-        body: JSON.stringify(work)
-      });
-      const newWork = { ...data, id: data._id };
-      setWorks([newWork, ...works]);
-      return { success: true, data: newWork };
+      const { data, error } = await supabase
+        .from('works')
+        .insert([{ ...work, user_id: user.id }])
+        .select()
+        .single();
+        
+      if (error) throw error;
+      setWorks([data, ...works]);
+      return { success: true, data };
     } catch (error) {
       console.error('添加作品失败:', error);
       return { success: false, message: error.message };
@@ -73,13 +57,16 @@ export const PortfolioProvider = ({ children }) => {
 
   const updateWork = async (id, updatedData) => {
     try {
-      const data = await apiFetch(`${API_BASE}/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(updatedData)
-      });
-      const updated = { ...data, id: data._id };
-      setWorks(works.map(w => w.id === id ? updated : w));
-      return { success: true, data: updated };
+      const { data, error } = await supabase
+        .from('works')
+        .update(updatedData)
+        .eq('id', id)
+        .select()
+        .single();
+        
+      if (error) throw error;
+      setWorks(works.map(w => w.id === id ? data : w));
+      return { success: true, data };
     } catch (error) {
       console.error('更新作品失败:', error);
       return { success: false, message: error.message };
@@ -88,9 +75,12 @@ export const PortfolioProvider = ({ children }) => {
 
   const deleteWork = async (id) => {
     try {
-      await apiFetch(`${API_BASE}/${id}`, {
-        method: 'DELETE'
-      });
+      const { error } = await supabase
+        .from('works')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
       setWorks(works.filter(w => w.id !== id));
       return { success: true };
     } catch (error) {

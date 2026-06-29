@@ -1,64 +1,43 @@
-import React, { createContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
+import { supabase } from '../config/supabase';
 
 export const AuthContext = createContext();
 
-const API_BASE = import.meta.env.VITE_API_URL 
-  ? `${import.meta.env.VITE_API_URL}/auth`
-  : '/api/auth';
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem('auth_token'));
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // 通用请求函数
-  const authFetch = useCallback(async (url, options = {}) => {
-    const headers = {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    const res = await fetch(url, { ...options, headers });
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.message || '请求失败');
-    }
-    return data;
-  }, [token]);
-
-  // 启动时检查登录状态
   useEffect(() => {
-    const checkAuth = async () => {
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-      try {
-        const data = await authFetch(`${API_BASE}/me`);
-        setUser(data.user);
-      } catch (err) {
-        // token 无效，清除
-        localStorage.removeItem('auth_token');
-        setToken(null);
-        setUser(null);
-      }
+    // 获取当前会话
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setToken(session?.access_token ?? null);
       setLoading(false);
-    };
-    checkAuth();
-  }, [token, authFetch]);
+    });
 
-  // 注册
+    // 监听认证状态变化
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setToken(session?.access_token ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const register = async (username, email, password) => {
     setError('');
     try {
-      const data = await authFetch(`${API_BASE}/register`, {
-        method: 'POST',
-        body: JSON.stringify({ username, email, password }),
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { username }
+        }
       });
-      // 不再自动登录，直接返回成功
+      if (error) throw error;
       return { success: true };
     } catch (err) {
       setError(err.message);
@@ -66,32 +45,30 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 登录
   const login = async (email, password) => {
     setError('');
     try {
-      const data = await authFetch(`${API_BASE}/login`, {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-      // 延迟 1.5 秒更新状态
-      setTimeout(() => {
-        localStorage.setItem('auth_token', data.token);
-        setToken(data.token);
-        setUser(data.user);
-      }, 1500);
-      return { success: true };
+      if (error) throw error;
+      
+      // 为了保持原有动画流畅度，这里也加入短暂延迟（虽然在 supabase 中不需要延迟保存 token）
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({ success: true });
+        }, 1500);
+      });
+      
     } catch (err) {
       setError(err.message);
       return { success: false, message: err.message };
     }
   };
 
-  // 退出登录
-  const logout = () => {
-    localStorage.removeItem('auth_token');
-    setToken(null);
-    setUser(null);
+  const logout = async () => {
+    await supabase.auth.signOut();
   };
 
   return (
