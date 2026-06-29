@@ -32,8 +32,23 @@ const AIOptimization = () => {
     setGenerating(true);
     
     try {
-      const { data: result, error } = await supabase.functions.invoke('ai-optimize', {
-        body: {
+      // 获取当前用户的 session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('登录已过期，请重新登录');
+      }
+
+      const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+      const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-optimize`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+          'apikey': SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify({
           title: selectedWork.title,
           type: selectedWork.type,
           materials: selectedWork.materials,
@@ -45,16 +60,15 @@ const AIOptimization = () => {
           highlights: selectedWork.highlights,
           dataFeedback: selectedWork.dataFeedback,
           coverImage: selectedWork.coverImage
-        }
+        })
       });
 
-      if (error) {
-        throw new Error(error.message || 'AI 边缘函数调用失败');
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData?.message || `AI 服务错误 (${response.status})`);
       }
 
-      if (result?.message) {
-        throw new Error(result.message);
-      }
+      const result = await response.json();
       
       // 更新作品数据，保存生成的文本
       updateWork(selectedWork.id, {
@@ -72,7 +86,7 @@ const AIOptimization = () => {
         suggestions: ["你的作品已经被 AI 全面提取和优化，可以直接在简历和面试中使用了！"]
       });
     } catch (error) {
-      console.error(error);
+      console.error('AI Generation Error:', error);
       alert(`AI 优化失败：\n${error.message}`);
     }
     
