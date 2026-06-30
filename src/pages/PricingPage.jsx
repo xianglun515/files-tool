@@ -61,18 +61,11 @@ const PricingPage = () => {
         }
         .pro-card {
           position: relative;
-          background: white;
+          background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
           border-radius: 24px;
           padding: 40px;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        }
-        .pro-card::before {
-          content: "";
-          position: absolute;
-          inset: -2px;
-          border-radius: 26px;
-          background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
-          z-index: -1;
+          box-shadow: 0 20px 40px rgba(168,85,247,0.25);
+          color: white;
         }
         .modal-overlay {
           position: fixed; inset: 0;
@@ -138,28 +131,28 @@ const PricingPage = () => {
         <div className="pricing-card pro-card">
           <div style={{
             position: 'absolute', top: '-14px', left: '50%', transform: 'translateX(-50%)',
-            background: 'linear-gradient(135deg, #6366f1, #a855f7)', color: 'white',
-            padding: '6px 16px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 600,
+            background: 'white', color: '#a855f7',
+            padding: '6px 16px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700,
             display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(168,85,247,0.3)'
           }}>
             <Crown size={14} /> 最受欢迎
           </div>
 
-          <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1e293b', marginBottom: '8px', display:'flex', alignItems:'center', gap:'8px' }}>
-            专业版 <Sparkles size={20} color="#a855f7" />
+          <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'white', marginBottom: '8px', display:'flex', alignItems:'center', gap:'8px' }}>
+            专业版 <Sparkles size={20} color="rgba(255,255,255,0.9)" />
           </h3>
-          <p style={{ color: '#64748b', marginBottom: '24px' }}>解锁无限制的 AI 能力，打造顶尖作品集</p>
+          <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '24px' }}>解锁无限制的 AI 能力，打造顶尖作品集</p>
           <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '32px' }}>
-            <span style={{ fontSize: '3rem', fontWeight: 800, color: '#1e293b' }}>¥29</span>
-            <span style={{ color: '#64748b', marginLeft: '4px' }}>/月</span>
+            <span style={{ fontSize: '3rem', fontWeight: 800, color: 'white' }}>¥29</span>
+            <span style={{ color: 'rgba(255,255,255,0.8)', marginLeft: '4px' }}>/月</span>
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '40px' }}>
-            <FeatureItem included><strong>无限制</strong> AI 智能提取</FeatureItem>
-            <FeatureItem included>所有基础版功能</FeatureItem>
-            <FeatureItem included>专属高级视觉大模型</FeatureItem>
-            <FeatureItem included>优先技术支持</FeatureItem>
-            <FeatureItem included>新功能抢先体验</FeatureItem>
+            <FeatureItem included proTheme><strong>无限制</strong> AI 智能提取</FeatureItem>
+            <FeatureItem included proTheme>所有基础版功能</FeatureItem>
+            <FeatureItem included proTheme>专属高级视觉大模型</FeatureItem>
+            <FeatureItem included proTheme>优先技术支持</FeatureItem>
+            <FeatureItem included proTheme>新功能抢先体验</FeatureItem>
           </div>
 
           {plan === 'pro' ? (
@@ -184,13 +177,13 @@ const PricingPage = () => {
               </button>
             </div>
           ) : (
-            <button 
+              <button 
               onClick={handleUpgradeClick}
               style={{
                 width: '100%', padding: '14px', borderRadius: '12px',
-                background: 'linear-gradient(135deg, #1e293b, #0f172a)',
-                color: 'white', border: 'none',
-                fontWeight: 600, fontSize: '1rem', cursor: 'pointer',
+                background: 'white',
+                color: '#a855f7', border: 'none',
+                fontWeight: 700, fontSize: '1.05rem', cursor: 'pointer',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 transition: 'transform 0.2s'
               }}
@@ -290,9 +283,14 @@ const PricingPage = () => {
 };
 
 // Helper Components
-const FeatureItem = ({ included, children }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: included ? '#334155' : '#cbd5e1' }}>
-    {included ? <Check size={18} color="#22c55e" /> : <X size={18} />}
+const FeatureItem = ({ included, proTheme, children }) => (
+  <div style={{ 
+    display: 'flex', alignItems: 'center', gap: '12px', 
+    color: included 
+      ? (proTheme ? 'white' : '#334155') 
+      : (proTheme ? 'rgba(255,255,255,0.4)' : '#cbd5e1') 
+  }}>
+    {included ? <Check size={18} color={proTheme ? "white" : "#22c55e"} /> : <X size={18} />}
     <span style={{ fontSize: '0.95rem' }}>{children}</span>
   </div>
 );
