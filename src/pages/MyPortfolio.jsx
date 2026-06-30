@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { PortfolioContext } from '../context/PortfolioContext';
-import { FolderKanban, GripVertical, Trash2, Download, Check, Shield } from 'lucide-react';
+import { FolderKanban, GripVertical, Trash2, Download, Check, Shield, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
@@ -30,9 +30,17 @@ const MyPortfolio = () => {
     setOrderedWorks(newOrder);
   };
 
-  const handleRemove = (id) => {
-    togglePortfolio(id);
+  const handleRemove = async (id) => {
+    // 乐观更新
     setOrderedWorks(orderedWorks.filter(w => w.id !== id));
+    
+    // 发起请求
+    const res = await togglePortfolio(id);
+    if (res && res.success === false) {
+      alert('移出作品集失败: ' + (res.message || '未知错误'));
+      // 恢复状态
+      setOrderedWorks(works.filter(w => w.addedToPortfolio));
+    }
   };
 
   const generateDirectory = () => {
@@ -114,10 +122,10 @@ const MyPortfolio = () => {
                     
                     <button 
                       onClick={() => handleRemove(work.id)}
-                      className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                      title="移出作品集"
+                      className="p-2 text-gray-400 hover:text-red-500 transition-colors bg-white rounded-full border border-transparent hover:border-red-100 hover:bg-red-50"
+                      title="从列表中移出 (原文件保留在作品库)"
                     >
-                      <Trash2 size={18} />
+                      <X size={18} />
                     </button>
                   </div>
                 ))}
