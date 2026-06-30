@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { PortfolioContext } from '../context/PortfolioContext';
 import { AuthContext } from '../context/AuthContext';
+import { SubscriptionContext } from '../context/SubscriptionContext';
 import { 
   FileText, 
   Tag, 
@@ -12,12 +13,14 @@ import {
   Wand2,
   FolderKanban,
   ChevronRight,
-  FolderPlus
+  FolderPlus,
+  Crown
 } from 'lucide-react';
 
 const Dashboard = () => {
   const { works } = useContext(PortfolioContext);
   const { user } = useContext(AuthContext);
+  const { plan, remainingToday, dailyLimit } = useContext(SubscriptionContext);
 
   const totalWorks = works.length;
   const uniqueTags = new Set();
@@ -97,33 +100,81 @@ const Dashboard = () => {
       </div>
 
       {/* Stat Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
-        {statCards.map((stat, idx) => (
-          <div key={idx} style={{
-            ...premiumCardStyle,
-            padding: '1.75rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {statCards.map((stat, index) => (
+            <div key={index} className="stat-card" style={{
+              background: 'linear-gradient(135deg, white 0%, #f8fafc 100%)',
+              border: '1px solid rgba(0,0,0,0.05)',
+              borderRadius: '20px', padding: '24px',
+              display: 'flex', alignItems: 'center', gap: '20px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+              position: 'relative', overflow: 'hidden'
+            }}>
               <div style={{
-                width: '38px', height: '38px', borderRadius: '8px',
-                background: '#f8f9fa',
-                border: '1px solid rgba(0,0,0,0.04)',
+                position: 'absolute', top: 0, right: 0, bottom: 0, width: '4px',
+                background: `linear-gradient(to bottom, var(--primary-color), #a855f7)`
+              }} />
+              <div style={{
+                width: '54px', height: '54px', borderRadius: '16px',
+                background: 'linear-gradient(135deg, rgba(0,113,227,0.1), rgba(168,85,247,0.1))',
+                color: 'var(--primary-color)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#111',
+                boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.5)'
               }}>
                 {stat.icon}
               </div>
+              <div>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500, marginBottom: '4px' }}>
+                  {stat.title}
+                </p>
+                <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1 }}>
+                  {stat.value}
+                </h3>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 套餐状态卡片 */}
+        <div style={{
+          background: plan === 'pro' 
+            ? 'linear-gradient(135deg, #1e293b, #0f172a)' 
+            : 'white',
+          borderRadius: '20px', padding: '24px 32px', marginBottom: '32px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          border: plan === 'pro' ? 'none' : '1px solid #e2e8f0',
+          boxShadow: plan === 'pro' ? '0 10px 25px -5px rgba(0,0,0,0.1)' : '0 4px 6px -1px rgba(0,0,0,0.05)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <div style={{
+              width: '48px', height: '48px', borderRadius: '12px',
+              background: plan === 'pro' ? 'rgba(168,85,247,0.2)' : '#f1f5f9',
+              color: plan === 'pro' ? '#a855f7' : '#64748b',
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <Crown size={24} />
             </div>
             <div>
-              <h3 style={{ fontSize: '2.2rem', fontWeight: 500, color: '#111', letterSpacing: '-0.03em', lineHeight: 1 }}>{stat.value}</h3>
-              <p style={{ fontSize: '0.85rem', color: '#666', fontWeight: 400, marginTop: '0.75rem' }}>{stat.title}</p>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: plan === 'pro' ? 'white' : '#1e293b', marginBottom: '4px' }}>
+                {plan === 'pro' ? '专业版 (Pro)' : '基础版 (Free)'}
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: plan === 'pro' ? '#94a3b8' : '#64748b' }}>
+                {plan === 'pro' 
+                  ? '已解锁无限次高级 AI 生成功能' 
+                  : `今日 AI 剩余次数：${remainingToday} / ${dailyLimit}`}
+              </p>
             </div>
           </div>
-        ))}
-      </div>
+          <Link to="/pricing" style={{
+            background: plan === 'pro' ? 'transparent' : '#1e293b',
+            color: plan === 'pro' ? '#94a3b8' : 'white',
+            padding: '10px 20px', borderRadius: '10px',
+            fontSize: '0.9rem', fontWeight: 600, border: plan === 'pro' ? '1px solid #334155' : 'none',
+            display: 'flex', alignItems: 'center', gap: '6px'
+          }}>
+            {plan === 'pro' ? '查看套餐详情' : '升级专业版'} <ChevronRight size={16} />
+          </Link>
+        </div>
 
       {/* Quick Links */}
       <div style={{ marginBottom: '3rem' }}>

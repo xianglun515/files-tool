@@ -22,6 +22,8 @@ import MyPortfolio from './pages/MyPortfolio';
 import PortfolioPreview from './pages/PortfolioPreview';
 import AuthPage from './pages/AuthPage';
 import LandingPage from './pages/LandingPage';
+import PricingPage from './pages/PricingPage';
+import { Crown } from 'lucide-react';
 
 // 路由守卫组件：未登录时重定向到欢迎封面页
 const ProtectedRoute = ({ children }) => {
@@ -69,6 +71,7 @@ const Sidebar = () => {
     { path: '/library', label: '作品库', icon: <Library size={19} /> },
     { path: '/ai', label: '智能提取', icon: <Wand2 size={19} /> },
     { path: '/portfolio', label: '我的作品集', icon: <FolderKanban size={19} /> },
+    { path: '/pricing', label: '升级专业版', icon: <Crown size={19} color="#a855f7" /> },
   ];
 
   return (
@@ -225,6 +228,7 @@ const AppContent = () => {
           <Route path="/ai" element={<ProtectedRoute><AIOptimization /></ProtectedRoute>} />
           <Route path="/portfolio" element={<ProtectedRoute><MyPortfolio /></ProtectedRoute>} />
           <Route path="/preview" element={<ProtectedRoute><PortfolioPreview /></ProtectedRoute>} />
+          <Route path="/pricing" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
         </Routes>
       </main>
     </div>

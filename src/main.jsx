@@ -5,11 +5,15 @@ import './index.css'
 import { PortfolioProvider } from './context/PortfolioContext.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 
+import { SubscriptionProvider } from './context/SubscriptionContext.jsx'
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
       <PortfolioProvider>
-        <App />
+        <SubscriptionProvider>
+          <App />
+        </SubscriptionProvider>
       </PortfolioProvider>
     </AuthProvider>
   </React.StrictMode>,

@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PortfolioContext } from '../context/PortfolioContext';
 import { AuthContext } from '../context/AuthContext';
+import { SubscriptionContext } from '../context/SubscriptionContext';
 import { supabase } from '../config/supabase';
 import { simulateAIGeneration } from '../utils/aiSimulator';
 import { Wand2, Copy, Check, Info, FileText, MessageSquare, Lightbulb } from 'lucide-react';
@@ -13,6 +14,8 @@ const AIOptimization = () => {
   
   const { works, updateWork } = useContext(PortfolioContext);
   const { token } = useContext(AuthContext);
+  const { plan, canUseAI, incrementUsage, remainingToday, dailyLimit } = useContext(SubscriptionContext);
+  const navigate = useNavigate();
 
   const [selectedWorkId, setSelectedWorkId] = useState(initialWorkId || '');
   const [activeTab, setActiveTab] = useState(defaultType);
@@ -29,6 +32,13 @@ const AIOptimization = () => {
 
   const handleGenerate = async () => {
     if (!selectedWork) return;
+
+    if (!canUseAI) {
+      alert("今日免费 AI 提取次数已用完，请升级专业版解锁无限次数！");
+      navigate('/pricing');
+      return;
+    }
+
     setGenerating(true);
     
     try {
@@ -88,6 +98,9 @@ const AIOptimization = () => {
       if (!updateResult?.success) {
         throw new Error(updateResult?.message || '保存 AI 结果到数据库失败');
       }
+
+      await incrementUsage();
+
     } catch (error) {
       console.error('AI Generation Error:', error);
       alert(`AI 优化失败：\n${error.message}`);
@@ -115,6 +128,16 @@ const AIOptimization = () => {
         <div className="col-span-1 space-y-6">
           <div className="card">
             <h2 className="text-lg font-bold mb-4">选择作品</h2>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                {plan === 'pro' ? (
+                  <span style={{ color: '#a855f7', fontWeight: 500 }}>✨ 专业版：无限次生成</span>
+                ) : (
+                  <span>今日剩余次数：<strong>{remainingToday}</strong> / {dailyLimit}</span>
+                )}
+              </div>
+            </div>
+
             <select 
               className="form-select w-full mb-4"
               value={selectedWorkId}
