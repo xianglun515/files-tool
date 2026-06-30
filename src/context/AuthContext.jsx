@@ -8,20 +8,45 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const checkAdminStatus = async (userId) => {
+    if (!userId) {
+      setIsAdmin(false);
+      return;
+    }
+    const { data } = await supabase
+      .from('admin_users')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+    setIsAdmin(!!data);
+  };
 
   useEffect(() => {
     // 获取当前会话
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
       setToken(session?.access_token ?? null);
-      setLoading(false);
+      if (currentUser) {
+        checkAdminStatus(currentUser.id).finally(() => setLoading(false));
+      } else {
+        setLoading(false);
+      }
     });
 
     // 监听认证状态变化
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
       setToken(session?.access_token ?? null);
-      setLoading(false);
+      if (currentUser) {
+        checkAdminStatus(currentUser.id).finally(() => setLoading(false));
+      } else {
+        setIsAdmin(false);
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -81,6 +106,7 @@ export const AuthProvider = ({ children }) => {
       register,
       logout,
       setError,
+      isAdmin,
     }}>
       {children}
     </AuthContext.Provider>

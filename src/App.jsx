@@ -8,7 +8,8 @@ import {
   FolderKanban,
   LogOut,
   Sparkles,
-  Target
+  Target,
+  Shield
 } from 'lucide-react';
 
 import { AuthContext } from './context/AuthContext';
@@ -24,6 +25,7 @@ import PortfolioPreview from './pages/PortfolioPreview';
 import AuthPage from './pages/AuthPage';
 import LandingPage from './pages/LandingPage';
 import PricingPage from './pages/PricingPage';
+import AdminDashboard from './pages/AdminDashboard';
 import { Crown } from 'lucide-react';
 
 // 路由守卫组件：未登录时重定向到欢迎封面页
@@ -62,7 +64,7 @@ const ProtectedRoute = ({ children }) => {
 const Sidebar = () => {
   const location = useLocation();
   const path = location.pathname;
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, isAdmin } = useContext(AuthContext);
 
   // 如果是在预览页、登录页或欢迎封面页，不显示侧边栏
   if (path === '/preview' || path === '/login' || path === '/welcome') return null;
@@ -136,14 +138,35 @@ const Sidebar = () => {
                 }
               }}
             >
-              {React.cloneElement(item.icon, { 
-                color: isActive ? 'var(--primary-color)' : 'currentColor',
-                size: 18
-              })}
-              <span>{item.label}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ 
+                  color: isActive ? 'var(--primary-color)' : 'var(--text-muted)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                  {item.icon}
+                </span>
+                <span>{item.label}</span>
+              </div>
             </Link>
           );
         })}
+
+        {isAdmin && (
+          <Link 
+            to="/admin"
+            style={{
+              display: 'flex', alignItems: 'center', gap: '12px', 
+              padding: '0.6rem 0.85rem', borderRadius: '8px', marginTop: '12px',
+              background: path === '/admin' ? '#fef2f2' : 'transparent',
+              color: path === '/admin' ? '#ef4444' : '#f87171',
+              fontWeight: path === '/admin' ? 700 : 600, fontSize: '0.9rem',
+              transition: 'all 0.2s ease', border: '1px solid #fee2e2'
+            }}
+          >
+            <Shield size={19} />
+            <span>管理员后台</span>
+          </Link>
+        )}
       </nav>
 
       {/* Divider */}
@@ -232,6 +255,7 @@ const AppContent = () => {
           <Route path="/portfolio" element={<ProtectedRoute><MyPortfolio /></ProtectedRoute>} />
           <Route path="/preview" element={<ProtectedRoute><PortfolioPreview /></ProtectedRoute>} />
           <Route path="/pricing" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         </Routes>
       </main>
     </div>
