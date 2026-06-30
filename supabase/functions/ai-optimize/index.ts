@@ -93,8 +93,8 @@ ${coverImage ? '（用户还附带了一张作品封面图，请仔细观察图�
         }
       ];
     } else {
-      // 无图片：使用纯文本模型
-      model = 'qwen-plus';
+      // 无图片：使用纯文本模型 (升级到 qwen3.7-plus 享受全新的 100万 免费额度)
+      model = 'qwen3.7-plus';
       messages = [
         { role: 'system', content: systemMsg },
         { role: 'user', content: prompt }
