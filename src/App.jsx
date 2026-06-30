@@ -7,7 +7,8 @@ import {
   Wand2, 
   FolderKanban,
   LogOut,
-  Sparkles
+  Sparkles,
+  Target
 } from 'lucide-react';
 
 import { AuthContext } from './context/AuthContext';
@@ -70,6 +71,7 @@ const Sidebar = () => {
     { path: '/', label: '首页总览', icon: <LayoutDashboard size={19} /> },
     { path: '/library', label: '作品库', icon: <Library size={19} /> },
     { path: '/ai', label: '智能提取', icon: <Wand2 size={19} /> },
+    { path: '/jobs', label: '岗位匹配', icon: <Target size={19} /> },
     { path: '/portfolio', label: '我的作品集', icon: <FolderKanban size={19} /> },
     { path: '/pricing', label: '升级专业版', icon: <Crown size={19} color="#a855f7" /> },
   ];
@@ -226,6 +228,7 @@ const AppContent = () => {
           <Route path="/library" element={<ProtectedRoute><WorkLibrary /></ProtectedRoute>} />
           <Route path="/details/:id" element={<ProtectedRoute><WorkDetails /></ProtectedRoute>} />
           <Route path="/ai" element={<ProtectedRoute><AIOptimization /></ProtectedRoute>} />
+          <Route path="/jobs" element={<ProtectedRoute><JobMatching /></ProtectedRoute>} />
           <Route path="/portfolio" element={<ProtectedRoute><MyPortfolio /></ProtectedRoute>} />
           <Route path="/preview" element={<ProtectedRoute><PortfolioPreview /></ProtectedRoute>} />
           <Route path="/pricing" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
