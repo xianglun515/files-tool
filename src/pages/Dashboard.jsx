@@ -14,12 +14,13 @@ import {
   FolderKanban,
   ChevronRight,
   FolderPlus,
-  Crown
+  Crown,
+  Shield
 } from 'lucide-react';
 
 const Dashboard = () => {
   const { works } = useContext(PortfolioContext);
-  const { user } = useContext(AuthContext);
+  const { user, isAdmin } = useContext(AuthContext);
   const { plan, remainingToday, dailyLimit } = useContext(SubscriptionContext);
 
   const totalWorks = works.length;
@@ -232,7 +233,14 @@ const Dashboard = () => {
               padding: '1.75rem',
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                <h3 style={{ fontWeight: 500, fontSize: '1.1rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '75%', color: '#111', letterSpacing: '-0.01em' }} title={work.title}>{work.title}</h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', maxWidth: '75%' }}>
+                  <h3 style={{ fontWeight: 500, fontSize: '1.1rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#111', letterSpacing: '-0.01em' }} title={work.title}>{work.title}</h3>
+                  {isAdmin && work.user_id !== user?.id && (
+                    <span style={{ fontSize: '0.65rem', background: '#fee2e2', color: '#ef4444', padding: '2px 6px', borderRadius: '4px', fontWeight: 700, flexShrink: 0, display: 'flex', alignItems: 'center', gap: '2px' }}>
+                      <Shield size={10} /> 他人
+                    </span>
+                  )}
+                </div>
                 <span style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '20px', background: '#f5f5f5', color: '#555', border: '1px solid rgba(0,0,0,0.04)' }}>
                   {work.type}
                 </span>

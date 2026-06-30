@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { PortfolioContext } from '../context/PortfolioContext';
-import { FolderKanban, GripVertical, Trash2, Download, Check } from 'lucide-react';
+import { FolderKanban, GripVertical, Trash2, Download, Check, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const MyPortfolio = () => {
   const { works, togglePortfolio } = useContext(PortfolioContext);
+  const { user, isAdmin } = useContext(AuthContext);
   
   // 只获取加入到作品集的作品
   const portfolioWorks = works.filter(w => w.addedToPortfolio);
@@ -98,9 +100,16 @@ const MyPortfolio = () => {
                       {work.coverName || '无封面'}
                     </div>
                     
-                    <div className="flex-1">
-                      <p className="font-bold text-sm leading-tight">{work.title}</p>
-                      <p className="text-xs text-muted mt-1">{work.type} · {(work.tags || []).slice(0, 2).join(' ')}</p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-bold text-sm leading-tight truncate">{work.title}</p>
+                        {isAdmin && work.user_id !== user?.id && (
+                          <span className="flex-shrink-0 flex items-center gap-1 text-[10px] bg-red-100 text-red-500 px-1.5 py-0.5 rounded font-bold">
+                            <Shield size={10} /> 他人
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted truncate">{work.type} · {(work.tags || []).slice(0, 2).join(' ')}</p>
                     </div>
                     
                     <button 

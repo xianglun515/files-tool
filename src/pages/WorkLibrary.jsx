@@ -1,10 +1,12 @@
 import React, { useContext, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { PortfolioContext } from '../context/PortfolioContext';
-import { Search, Filter, FolderPlus, UploadCloud, FileType, CheckCircle, AlertCircle, X, Sparkles, Save, Trash2 } from 'lucide-react';
+import { Search, Filter, FolderPlus, UploadCloud, FileType, CheckCircle, AlertCircle, X, Sparkles, Save, Trash2, Shield } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext';
 
 const WorkLibrary = () => {
   const { works, togglePortfolio, addWork, deleteWork } = useContext(PortfolioContext);
+  const { user, isAdmin } = useContext(AuthContext);
   
   // ================= 1. 上传相关的状态 =================
   const fileInputRef = useRef(null);
@@ -321,8 +323,17 @@ const WorkLibrary = () => {
                   </div>
                 )}
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                  <h3 style={{ fontWeight: 600, fontSize: '1.1rem', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '1rem' }} title={work.title}>{work.title}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem', gap: '8px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <h3 style={{ fontWeight: 600, fontSize: '1.1rem', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={work.title}>{work.title}</h3>
+                      {isAdmin && work.user_id !== user?.id && (
+                        <span style={{ fontSize: '0.65rem', background: '#fee2e2', color: '#ef4444', padding: '2px 6px', borderRadius: '4px', fontWeight: 700, flexShrink: 0, display: 'flex', alignItems: 'center', gap: '2px' }}>
+                          <Shield size={10} /> 他人
+                        </span>
+                      )}
+                    </div>
+                  </div>
                   <button 
                     onClick={(e) => handleDelete(work.id, e)}
                     style={{ background: 'transparent', border: 'none', color: 'var(--text-light)', cursor: 'pointer', padding: '4px', flexShrink: 0, borderRadius: '4px', transition: 'all 0.2s' }}
